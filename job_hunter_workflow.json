@@ -1,0 +1,1570 @@
+{
+  "name": "job hunter",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 7
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        -240,
+        560
+      ],
+      "id": "efbf46a0-e216-4cc8-811f-d284565d8453",
+      "name": "Schedule Trigger",
+      "alwaysOutputData": true,
+      "retryOnFail": true
+    },
+    {
+      "parameters": {
+        "schemaType": "manual",
+        "inputSchema": "={\n  \"title\": \"String | 岗位名称\",\n  \"company\": \"String | 公司名称\",\n  \"industry\": \"String | 所属行业\",\n  \"location\": \"String | 办公地点\",\n  \"url\": \"String (URL) | 职位链接\",\n  \"posted_at\": \"String (YYYY-MM-DD) | 发布日期\",\n  \"category\": \"String (Enum) | Full-time, Part-time, etc.\",\n  \"ai_labels\": \"String (Comma-separated) | 目标岗位,适合岗位\",\n  \"ai_requirements\": \"Text | 核心要求及拆解\",\n  \"ai_language\": \"String (Enum) | 提炼对英语和德语的要求\",\n  \"ai_comp\": \"Text | 优势与 Gap 分析\",\n  \"ai_comp_score\": \"Integer (0-100) | 匹配得分\",\n  \"ai_pros\": \"Text | 业务前景与跳板价值\",\n  \"ai_coach\": \"Text | 具体的投递策略\"\n}",
+        "autoFix": true
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.3,
+      "position": [
+        1040,
+        848
+      ],
+      "id": "b688e0f3-e459-40a5-bf27-da4200e714f1",
+      "name": "Structured Output Parser",
+      "retryOnFail": false,
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "chatId": "-5191427337",
+        "text": "={{ $json.summary_report }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        2016,
+        400
+      ],
+      "id": "d59f96b1-8b04-4535-a449-fdcaa30f4e98",
+      "name": "Send a text message",
+      "webhookId": "96b53414-e38b-4706-befb-cee24c543b42",
+      "credentials": {
+        "telegramApi": {
+          "id": "FPvrhENYUHnQvgIL",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "Run actor and get dataset",
+        "actorId": {
+          "__rl": true,
+          "value": "TrtlecxAsNRbKl1na",
+          "mode": "list",
+          "cachedResultName": "💡 Indeed Jobs Scraper (valig/indeed-jobs-scraper)",
+          "cachedResultUrl": "https://console.apify.com/actors/TrtlecxAsNRbKl1na/input"
+        },
+        "customBody": "{\n    \"flattenOutput\": false,\n    \"includeCompanyDetails\": false,\n    \"maxJobs\": 100,\n    \"onlyExternalJobs\": false,\n    \"proxy\": {\n        \"useApifyProxy\": true,\n        \"apifyProxyGroups\": [\n            \"RESIDENTIAL\"\n        ]\n    },\n    \"startUrls\": [\n        {\n            \"url\": \"https://de.indeed.com/jobs?q=product+manager&l=german&from=searchOnDesktopSerp&vjk=d4419867bd2459c8\"\n        },\n        {\n            \"url\": \"https://de.indeed.com/jobs?q=Produkt+Werkstudent&l=german&sort=date&fromage=7&sc=0kf%3Aattr%284BQ7N%7C75GKK%7CCF3CP%7CN6AA6%7CVDTG7%252COR%29cmpsec%28CPGHF%7CNKR5F%252COR%29%3B&from=searchOnDesktopSerp&vjk=b0212ff5bb6a7f75\"\n        }\n    ]\n}",
+        "timeout": {}
+      },
+      "type": "@apify/n8n-nodes-apify.apify",
+      "typeVersion": 1,
+      "position": [
+        -16,
+        560
+      ],
+      "id": "2789d2f8-f8a5-45f0-aeea-5e1d4757e84b",
+      "name": "Indeed",
+      "credentials": {
+        "apifyApi": {
+          "id": "RAFpUMpXAF01ssm4",
+          "name": "Apify account 2"
+        }
+      },
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "operation": "Run actor and get dataset",
+        "actorId": {
+          "__rl": true,
+          "value": "pIVhuvHZkW2Llfjrr",
+          "mode": "list",
+          "cachedResultName": "Stepstone.de [Only $1💰] Jobs Scraper (memo23/stepstone-search-cheerio-ppr)",
+          "cachedResultUrl": "https://console.apify.com/actors/pIVhuvHZkW2Llfjrr/input"
+        },
+        "customBody": "{\n    \"maxRequestRetries\": 100,\n    \"proxy\": {\n        \"useApifyProxy\": false\n    },\n    \"startUrls\": [\n        {\n            \"url\": \"https://www.stepstone.de/jobs/product-manager/in-berlin?radius=30&searchOrigin=Resultlist_top-search\"\n        },\n        {\n            \"url\": \"https://www.stepstone.de/jobs/working-student-ai/in-berlin-or-m%c3%bcnchen-or-hamburg-or-d%c3%bcsseldorf?radius=30&sort=2&action=sort_publish&searchOrigin=Resultlist_top-search\"\n        },\n        {\n            \"url\": \"https://www.stepstone.de/jobs/working-student-product-management/in-berlin-or-m%c3%bcnchen-or-hamburg-or-d%c3%bcsseldorf?whatType=autosuggest&radius=30&action=facet_selected%3bage%3bage_7&ag=age_7&searchOrigin=Resultlist_top-search\"\n        },\n        {\n            \"url\": \"https://www.stepstone.de/jobs/working-student-automation/in-berlin-or-m%c3%bcnchen-or-hamburg-or-d%c3%bcsseldorf?radius=30&sort=2&action=sort_publish&ag=age_7&se=21000&searchOrigin=Resultlist_top-search\"\n        },\n      {\n            \"url\": \"https://www.stepstone.de/jobs/ai-working-student?action=facet_selected%3bage%3bage_1&ag=age_1&searchOrigin=membersarea\"\n        }\n    ]\n}",
+        "timeout": {}
+      },
+      "type": "@apify/n8n-nodes-apify.apify",
+      "typeVersion": 1,
+      "position": [
+        -16,
+        752
+      ],
+      "id": "148f5218-776e-41b5-a940-b23467c70755",
+      "name": "Stepstone",
+      "credentials": {
+        "apifyApi": {
+          "id": "RAFpUMpXAF01ssm4",
+          "name": "Apify account 2"
+        }
+      },
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "operation": "Run actor and get dataset",
+        "actorId": {
+          "__rl": true,
+          "value": "hKByXkMQaC5Qt9UMN",
+          "mode": "list",
+          "cachedResultName": "Linkedin Jobs Scraper (curious_coder/linkedin-jobs-scraper)",
+          "cachedResultUrl": "https://console.apify.com/actors/hKByXkMQaC5Qt9UMN/input"
+        },
+        "customBody": "{\n    \"count\": 10,\n    \"scrapeCompany\": true,\n    \"splitByLocation\": false,\n    \"urls\": [\n        \"https://www.linkedin.com/jobs/search-results/?currentJobId=4370670771&keywords=product&origin=JOB_SEARCH_PAGE_LOCATION_AUTOCOMPLETE&referralSearchId=fey5YKvUn2v%2BBqk6tBXQlg%3D%3D&geoId=101282230&f_TPR=r604800\",\n        \"https://www.linkedin.com/jobs/search-results/?currentJobId=4379178731&keywords=working%20student%20product&origin=JOB_SEARCH_PAGE_JOB_FILTER&referralSearchId=yCND3v24Ly807W%2FhL2bhRw%3D%3D&f_TPR=r604800\",\n        \"https://www.linkedin.com/jobs/search/?currentJobId=4238483546&distance=25&f_F=it%2Canls%2Cprdm%2Ccnsl&f_I=4%2C96%2C11%2C6%2C112%2C1594&f_T=6225%2C13%2C9608%2C71%2C29%2C27%2C4924&f_TPR=r604800&geoId=101282230&keywords=working%20student%20product&origin=JOB_SEARCH_PAGE_JOB_FILTER&refresh=true&sortBy=DD\",\n\n\"https://www.linkedin.com/jobs/search/?currentJobId=4378312554&geoId=103035651&keywords=ai%20working%20student&origin=JOB_SEARCH_PAGE_SEARCH_BUTTON&refresh=true\"\n    ]\n}",
+        "timeout": {}
+      },
+      "type": "@apify/n8n-nodes-apify.apify",
+      "typeVersion": 1,
+      "position": [
+        -16,
+        368
+      ],
+      "id": "d87f5939-213c-411e-ab3d-1843423f03f6",
+      "name": "Run an Actor and get dataset",
+      "credentials": {
+        "apifyApi": {
+          "id": "RAFpUMpXAF01ssm4",
+          "name": "Apify account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-3.1-flash-lite-preview",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        576,
+        992
+      ],
+      "id": "fbaa3f10-4e32-4840-8587-def3ae989137",
+      "name": "Google Gemini Chat Model1",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "Ycj8RJvue8hsDdjF",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        1040,
+        1008
+      ],
+      "id": "d715d418-9945-46dd-b951-b0950c1175f5",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "Ycj8RJvue8hsDdjF",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "tableId": "job hunter",
+        "returnAll": true
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        32,
+        160
+      ],
+      "id": "fb809625-bcca-4c94-83fb-dc6852c45270",
+      "name": "Get many rows",
+      "credentials": {
+        "supabaseApi": {
+          "id": "jwKRHuCXf6v9Jncq",
+          "name": "Supabase account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "serviceAccount",
+        "operation": "download",
+        "fileId": {
+          "__rl": true,
+          "value": "1wzdjwGFAowLLqqAVf-Yk-Hlrp-WWvEJ6",
+          "mode": "list",
+          "cachedResultName": "EN_CV_1.1.pdf",
+          "cachedResultUrl": "https://drive.google.com/file/d/1wzdjwGFAowLLqqAVf-Yk-Hlrp-WWvEJ6/view?usp=drivesdk"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        -16,
+        1008
+      ],
+      "id": "0067c86a-8b30-4490-b798-db57e6caca6a",
+      "name": "Download file",
+      "credentials": {
+        "googleApi": {
+          "id": "DAAoOUEiXGc27nro",
+          "name": "n8n service account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "pdf",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1.1,
+      "position": [
+        160,
+        1008
+      ],
+      "id": "ca7c6c9e-a81b-45f2-9bb5-cbd8f36663f7",
+      "name": "Extract from File",
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "bc4ddfa3-42a6-462d-bd93-805c2338fe01",
+              "name": "title",
+              "value": "={{ $json.title }}",
+              "type": "string"
+            },
+            {
+              "id": "8886aa94-447e-45b2-9961-4b2ed89195fa",
+              "name": "company",
+              "value": "={{ $json.companyName }}",
+              "type": "string"
+            },
+            {
+              "id": "798bf8b0-447f-4ba7-ae16-78b20006ae15",
+              "name": "location",
+              "value": "={{ $json.location }}",
+              "type": "string"
+            },
+            {
+              "id": "98ad5247-5af5-4e1d-ab38-86257f71434e",
+              "name": "industry",
+              "value": "={{ $json.industries }}",
+              "type": "string"
+            },
+            {
+              "id": "78d9510e-8db6-487e-8075-d41c5afd87f8",
+              "name": "desc",
+              "value": "={{ $json.descriptionText }}",
+              "type": "string"
+            },
+            {
+              "id": "aee53531-4453-422a-8eb4-e79e7f6cdce3",
+              "name": "salary",
+              "value": "={{ $json.salary }}",
+              "type": "string"
+            },
+            {
+              "id": "48bf9ddb-900c-47e6-b32e-5c166a27f4fd",
+              "name": "posttime",
+              "value": "={{ $json.postedAt }}",
+              "type": "string"
+            },
+            {
+              "id": "d456f7ac-1a0d-4885-87ee-066ec0843634",
+              "name": "url",
+              "value": "={{ $json.link }}",
+              "type": "string"
+            },
+            {
+              "id": "a13d4fc4-9ef1-42b3-aa47-30cea6d37841",
+              "name": "source",
+              "value": "linkedin",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        208,
+        368
+      ],
+      "id": "9152decc-1a7a-48a4-b8d0-5123cb3b7d2d",
+      "name": "Normalize field names"
+    },
+    {
+      "parameters": {
+        "mode": "raw",
+        "jsonOutput": "={\n  \"title\": \"={{ $json.title }}\",\n  \"location\": \"={{ $json.location.city }}\",\n  \"company\": \"={{ $json.employer.name }}\",\n  \"industry\": \"={{ $json.employer.industry }}\",\n  \"desc\": \"={{ $json.description.text }}\",\n  \"salary\": \"={{ $json.employer.revenue }}\",\n  \"posttime\": \"={{ $json.datePublished }}\",\n  \"url\": \"={{ $json.url }}\"\n  \"source\": \"=indeed\"\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        208,
+        560
+      ],
+      "id": "ffeab5c8-9b67-4826-a978-7efd1666b14a",
+      "name": "Normalize field names1",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "mode": "raw",
+        "jsonOutput": "={\n  \"title\": \"={{ $json.title }}\",\n  \"location\": \"={{ $json.location }}\",\n  \"company\": \"={{ $json.companyName }}\",\n  \"industry\": \"={{ $json.metaData?.industry || 'Food & Beverage' }}\",\n  \"desc\": \"={{ $json.textSnippet }}\",\n  \"salary\": \"={{ $json.salary || 'Negotiable' }}\",\n  \"posttime\": \"={{ $json.datePosted }}\",\n  \"url\": \"={{ $json.url }}\",\n  \"source\": \"=stepstone\"\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        208,
+        752
+      ],
+      "id": "7ffd5f1d-1faa-45bf-a7e5-68f6840d8673",
+      "name": "Normalize field names2",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "advanced": true,
+        "mergeByFields": {
+          "values": [
+            {
+              "field1": "=url",
+              "field2": "link"
+            }
+          ]
+        },
+        "joinMode": "keepNonMatches",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        496,
+        384
+      ],
+      "id": "6ab796e0-d342-44bf-beb8-501ee9bb843a",
+      "name": "Merge data"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=title：{{ $json.title }}\ncompany：{{ $json.company }}\nlocation：{{ $json.location }}\nindustry：{{ $json.industry }}\ndesc：{{ $json.desc }}\nsalary：{{ $json.salary }}\nposted_at：{{ $json.posttime }}\nsource：{{ $json.source }}\nurl：{{ $json.url }}",
+        "hasOutputParser": true,
+        "options": {
+          "systemMessage": "=# Role\n你是一位拥有 10 年经验的欧洲/德国市场资深技术猎头。你深谙德国数字，科技市场的招聘和发展（尤其是AI, Automation, Digitalization等2B领域），你深入研究过不同人在面对不同国家候选人时的心理预期，擅长挖掘中国背景候选人的优势，您能从商业前景角度判断岗位是否具有“钱景”或“跳板”价值，并给中国候选人提供务实的在德国的求职计划\n\n# Context\n- 用户：在德求职的中国女性，31岁，有6年中国国内的工作经验，核心背景在【软件，企业工具，协同和效率工具，低代码工具，项目管理，知识管理，企业数字化领域】。\n- 职业目标（Dream）：偏向ToB/工具类/AI/自动化/流程数字化/企业数字化等的产品，解决方案相关的岗位。不适合代码开发测试背景的工作，拒绝重度沟通（Politics/Coordination）。\n- 语言：德英双语办公无障碍，但不擅长高压社交/撕逼。\n- 简历内容：{{ $json.text }}\n- 目标职位 (JD)：{{ $json.desc }}\n\n# Task\n对比简历与 JD，进行多维度标签化分析与竞争力评估，按照结构化输出的要求输出内容\n\n# Evaluation Logic\n1. AI_requirements:把{{ $json.desc }}中的岗位要求翻译为中文，然后分析这个岗位核心能力要求\n2. AI_language:提炼出该岗位对语言的要求水平\n3. AI_label：打标签，分别为目标岗位（符合用户求职目标），适合岗位（从用户简历看能做），不适合的岗位，可以打多个标签\n4. AI_comp：逐条对比 JD 的硬性要求（Must-have）与简历。分析用户的优势和gap。\n5. AI_pros:业务方向分析：是夕阳行业数字化还是前沿 AI 应用？是“高薪钱景”岗，还是适合作为进入德国核心产业的“优质跳板”？相比于是否是大公司，用户更关注工作内容，业务方向\n\n# Output Schema (必须严格遵守)\n{\n  \"title\": \"String | 岗位名称\",\n  \"company\": \"String | 公司名称\",\n  \"industry\": \"String | 所属行业\",\n  \"location\": \"String | 办公地点\",\n  \"url\": \"String (URL) | 职位链接\",\n  \"posted_at\": \"String (YYYY-MM-DD) | 发布日期\",\n  \"category\": \"String (Enum) | Full-time, Part-time, etc.\",\n  \"ai_labels\": \"String (Comma-separated) | 目标岗位,适合岗位\",\n  \"ai_requirements\": \"Text | 核心要求及拆解\",\n  \"ai_language\": \"String (Enum) |提炼对英语和德语的要求\",\n  \"ai_comp\": \"Text | 优势与 Gap 分析\",\n  \"ai_comp_score\": \"Integer (0-100) | 匹配得分\",\n  \"ai_pros\": \"Text | 业务前景与跳板价值\",\n  \"ai_coach\": \"Text | 具体的投递策略\"\n}"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        768,
+        528
+      ],
+      "id": "9697299d-41c1-413b-a6bd-86eda9c89333",
+      "name": "Resume and Position analysis",
+      "retryOnFail": false,
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "advanced": true,
+        "mergeByFields": {
+          "values": [
+            {
+              "field1": "output.url",
+              "field2": "url"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        1136,
+        400
+      ],
+      "id": "aea9e644-f45b-4353-b8b9-f20788752276",
+      "name": "Parse data"
+    },
+    {
+      "parameters": {
+        "tableId": "job hunter",
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldId": "title",
+              "fieldValue": "={{ $json.output.title }}"
+            },
+            {
+              "fieldId": "company",
+              "fieldValue": "={{ $json.output.company }}"
+            },
+            {
+              "fieldId": "location",
+              "fieldValue": "={{ $json.output.location }}"
+            },
+            {
+              "fieldId": "industry",
+              "fieldValue": "={{ $json.output.industry }}"
+            },
+            {
+              "fieldId": "desc",
+              "fieldValue": "={{ $json.desc }}"
+            },
+            {
+              "fieldId": "salary",
+              "fieldValue": "={{ $json.salary }}"
+            },
+            {
+              "fieldId": "posted_at",
+              "fieldValue": "={{ $json.posttime }}"
+            },
+            {
+              "fieldId": "AI_requirements",
+              "fieldValue": "={{ $json.output.ai_requirements }}"
+            },
+            {
+              "fieldId": "AI_language",
+              "fieldValue": "={{ $json.output.ai_language }}"
+            },
+            {
+              "fieldId": "AI_match_score",
+              "fieldValue": "={{ $json.output.ai_comp_score }}"
+            },
+            {
+              "fieldId": "AI_competiveness",
+              "fieldValue": "={{ $json.output.ai_comp }}"
+            },
+            {
+              "fieldId": "AI_coach",
+              "fieldValue": "={{ $json.output.ai_coach }}"
+            },
+            {
+              "fieldId": "ai_labels",
+              "fieldValue": "={{ $json.output.ai_labels }}"
+            },
+            {
+              "fieldId": "url",
+              "fieldValue": "={{ $json.output.url }}"
+            },
+            {
+              "fieldId": "category",
+              "fieldValue": "={{ $json.output.category }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        1344,
+        400
+      ],
+      "id": "e7fda26c-1e16-4b59-8f68-9f5b709ac6f5",
+      "name": "save into database",
+      "credentials": {
+        "supabaseApi": {
+          "id": "jwKRHuCXf6v9Jncq",
+          "name": "Supabase account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "serviceAccount",
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "https://docs.google.com/spreadsheets/d/1xNz2T1oevRutNwNgjbpoH3eUWDzeCaHP3szjHo3AdgU/edit?usp=sharing",
+          "mode": "url"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "Sheet1",
+          "mode": "name"
+        },
+        "columns": {
+          "mappingMode": "autoMapInputData",
+          "value": {
+            "location": "={{ $('Merge data').item.json.location }}",
+            "company": "={{ $('Merge data').item.json.company }}",
+            "desc": "={{ $('Merge data').item.json.desc }}",
+            "create_time": "={{ $now.toFormat('yyyy-MM-dd') }}",
+            "url": "={{ $('Merge data').item.json.url }}",
+            "title": "={{ $json.output.title }}",
+            "industry": "={{ $('Merge data').item.json.industry }}"
+          },
+          "matchingColumns": [
+            "id"
+          ],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "created_at",
+              "displayName": "created_at",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "title",
+              "displayName": "title",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "company",
+              "displayName": "company",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "location",
+              "displayName": "location",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "industry",
+              "displayName": "industry",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "desc",
+              "displayName": "desc",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "salary",
+              "displayName": "salary",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "posted_at",
+              "displayName": "posted_at",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "AI_requirements",
+              "displayName": "AI_requirements",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "AI_language",
+              "displayName": "AI_language",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "AI_match_score",
+              "displayName": "AI_match_score",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "url",
+              "displayName": "url",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "category",
+              "displayName": "category",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "AI_coach",
+              "displayName": "AI_coach",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "AI_competiveness",
+              "displayName": "AI_competiveness",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "ai_labels",
+              "displayName": "ai_labels",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "create_time",
+              "displayName": "create_time",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1568,
+        400
+      ],
+      "id": "30f7682a-10f7-4eef-bc25-8a0f409cf75c",
+      "name": "save into google sheet",
+      "credentials": {
+        "googleApi": {
+          "id": "DAAoOUEiXGc27nro",
+          "name": "n8n service account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// 获取 AI Agent 节点处理后的所有结果\nconst allItems = $input.all();\n\n// 1. 初始化统计变量\nlet targetCount = 0;   // 目标岗位计数\nlet suitableCount = 0; // 适合岗位计数\nlet processedCount = allItems.length;\n\n// 2. 预处理数据：提取 JSON 并转换分数\nlet jobs = allItems.map(item => {\n  const d = item.json;\n  // 确保分数是数字类型\n  const score = parseInt(d.ai_comp_score) || 0;\n  \n  // 统计标签逻辑\n  const labels = d.ai_labels || \"\";\n  if (labels.includes(\"目标岗位\")) targetCount++;\n  if (labels.includes(\"适合岗位\")) suitableCount++;\n  \n  return { ...d, score };\n});\n\n// 3. 排序逻辑：按分数从高到低排列\njobs.sort((a, b) => b.score - a.score);\n\n// 4. 获取前 5 个岗位\nconst top5 = jobs.slice(0, 5);\n\n// 5. 构建汇总列表\nlet summaryList = top5.map((job, index) => {\n  return `${index + 1}. ${job.title} (得分: ${job.ai_comp_score})\\n` +\n         `**公司**: ${job.company}\\n` +\n         `**发布时间**: ${job.posted_at || 'N/A'}\\n` +\n         `**地点**: ${job.location || 'N/A'}\\n` +\n         `**核心要求**: ${job.ai_requirements}\\n` +\n         `**职位链接**: [点击查看](${job.url})\\n`;\n}).join('\\n---\\n');\n\n// 6. 返回最终结果\nreturn {\n  total_processed: processedCount,\n  target_total: targetCount,\n  suitable_total: suitableCount,\n  summary_report: `## 🚀 今日求职日报 (${$now.toFormat('yyyy-MM-dd')})\\n\\n` +\n                  `今天共处理了 **${processedCount}** 个岗位：\\n` +\n                  `🎯 **目标岗位**: ${targetCount} 个\\n` +\n                  `✅ **适合岗位**: ${suitableCount} 个\\n\\n` +\n                  `---\\n\\n` +\n                  `## 🔥 匹配度最高的前 5 个机会\\n\\n` +\n                  (summaryList || \"今天没有找到合适的岗位推荐。\")\n};"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1792,
+        400
+      ],
+      "id": "e587c958-299d-41e0-af38-1701a66472f6",
+      "name": "define notify rules"
+    }
+  ],
+  "pinData": {
+    "Merge data": [
+      {
+        "json": {
+          "title": "Visiting Associate IT Consulting (all genders) - BCG Platinion",
+          "company": "BCG Platinion",
+          "location": "Stuttgart, Baden-Württemberg, Germany",
+          "industry": "Business Consulting and Services",
+          "desc": "As Visiting Associate (all genders) at BCG Platinion you'll support our consulting team within up to three months. You'll actively support the development of IT strategies, concepts and solutions at the customer site as well as at one of our office locations. Thereby, you will actively take part in the BCG Platinion working life and continuously expand your capabilities.Shape the world of tomorrow You'll provide support for the technical analysis and the review of IT architectures or the IT product evaluation for different industries and technical environments You'll independently prepare IT-related project content such as the analysis and optimization of IT processes and IT value chains You'll be responsible for the preparation and follow-up of meetings and presentations and all project related analysis and dataThis Is How You Make a Difference You are at an successful and advanced stage of your master’s studies in computer science, business informatics or a related discipline You own very good IT skills and have already gained first practical experience via internships or as working student (SW-development, IT project management, IT services processes) You have excellent analytical and conceptual abilities and are a professional in using MS-Office programs (Word, PowerPoint, Excel and Outlook) You feel comfortable in interdisciplinary teams and global contexts You work extremely customer- and results-oriented You are good at understanding and communicating complex topics in both, German and EnglishHow You Can Grow With UsAt our company, strict hierarchies are a thing of the past – we believe in diversity and an open-minded culture of feedback across all levels. Our working environment reflects this. Inclusive teamwork is of utmost importance to us, in addition to content that lets you grow your abilities every day. Constant learning, appreciation for individual contributions, and trust from day one are our highest priorities, especially in the current situation. Therefore, we provide not only modern and centrally located offices, but also cutting-edge IT equipment for remote work and regular virtual events held by our vibrant and welcoming network. Furthermore, there is the opportunity for a permanent position after your internship.Become a part of our teamBCG Platinion is an Equal Opportunity Employer and actively promotes diversity and inclusion. We consider all qualified applicants regardless of ethnic and social background, age, gender, sexual identity, religion, ideology or disability.Apply over our online portal now, with your CV, all relevant references and transcripts, a cover letter including your salary expectations and earliest possible entry date. If you have any questions, please contact Leonie Kutschera-Groß at +49 221 58958-555.Further information at www.bcgplatinion.com/careers?local=de#BCGPlatinion",
+          "salary": "",
+          "posttime": "2026-03-06",
+          "url": "https://de.linkedin.com/jobs/view/visiting-associate-it-consulting-all-genders-bcg-platinion-at-bcg-platinion-4238478993?refId=mhoa1BgU8nOOj5iv5zSKkA%3D%3D&trackingId=mNtpIce7p6Anj40AtIKQHQ%3D%3D&position=25&pageNum=0",
+          "source": "linkedin"
+        },
+        "pairedItem": {
+          "item": 0,
+          "input": 1
+        }
+      },
+      {
+        "json": {
+          "title": "Product Designer",
+          "company": "Niulix",
+          "location": "Berlin, Berlin, Germany",
+          "industry": "Human Resources Services",
+          "desc": "Join a growing startup as Product Design Lead, owning product design and UX, crafting intuitive flows and interfaces, and collaborating with founders and engineers in Berlin (on-site)Requirements3+ years of experience in product and UX designProven ability to craft UIs, flows, and prototypesAutonomous and able to own a complex product from concept to launchBased in Berlin or willing to relocateHaving a work permit in Germany BenefitsOwnership from day 1Grow with the companyShared upside with top-of-market salary and generous equityWork on a mission that matters",
+          "salary": "",
+          "posttime": "2026-03-09",
+          "url": "https://de.linkedin.com/jobs/view/product-designer-at-niulix-4381821758?refId=GH1g%2B4wokw5R%2F5ZfRuofEQ%3D%3D&trackingId=dOa7FVYdXOx%2BqOvSHHlOpA%3D%3D&position=25&pageNum=0",
+          "source": "linkedin"
+        },
+        "pairedItem": {
+          "item": 1,
+          "input": 1
+        }
+      },
+      {
+        "json": {
+          "title": "Systems Test Engineering Co-Op",
+          "company": "Rheem Manufacturing",
+          "location": "Fort Smith, AR",
+          "industry": "Manufacturing",
+          "desc": "Job DescriptionThe Systems Test Engineering Co-Op will help test and validate systems with specific attention to the electronic controls on an on-going basis. This position will be writing automated test scripts, configuring test systems, writing test reports, and working with hardware controls. You will work under and be given direction from systems engineers on a daily basis. You will work under and be given direction from systems engineers daily.This position will serve our Enterprise Division, located in Fort Smith, AR or Lewisville, TX (Onsite). This is a rotating co-op position beginning in August 2026.ResponsibilitiesAssemble experimental circuitry and complete prototype models according to engineering schematics, instructions, technical manuals, and knowledge of electronic systems and components. Assemble and verify various HVAC systems as well as test fixtures which include various AC voltage levels (24/120/220VAC) as well as DC voltage levels (12/5/3.3VDC)Set up standard test apparatus or design test equipment and circuitry to conduct functional, operational, environmental, and life tests to evaluate performance and reliability of prototype or production models. Upgrade software and run software tests on existing electronic systems. To include maintaining detailed records of validity tests and upgrades performed. Maintain a safety conscious environment for all personnel working in lab. Other duties as assignedQualificationsFull time student working towards a Computer Science or Engineering Degree Understand basic voltage and current circuits, diagrams, schematics and instructions in order to complete installation or troubleshooting of electronics systems, parts or wiring networks. Ability to read, understand and implement technical procedures, and government regulations and to record technical informationBasic working knowledge of electronic controls test and instrumentation equipment such as oscilloscopes, function generators, and environmental test chambersGood command of Python or other programming languagesProficiency in Microsoft Word, and Excel About UsAt Rheem, we engineer products for life. For home life. For work life. For the life of the planet we all share. Backed by over 100 years of expertise, we’re passionate about product innovation and boldly committed to sustainability. Our full line of global air and water solutions deliver reliable performance, comfort and energy savings for residential and commercial applications worldwide. From engineers to accountants, sales professionals to support experts, Rheem depends on people to power our innovations. Join Rheem and help shape the future of products that impact lives—every day.Our Behavior Based Values Set Us ApartListening to Understand – Open mind, learning from others, accepting feedback, embracing the objectiveContributing Respectfully - Sharing opinions, valuing ideas, sharing opposing perspectives with respectThinking Creatively – Applying creativity, seeking improvements, understanding from the customers’ lensActing with Responsibility – Owning decisions and actions, acting with integrity, embracing accountabilityRheem is an Equal Opportunity Employer. Rheem encourages all qualified candidates to apply, including those of any race, color, religion, gender, gender identity or expression, sexual orientation, national origin, genetics, disability, age, or veteran status. The job description above has been designed to indicate the general nature and level of work performed by employees within this classification. It is not designed to contain or be interpreted as a comprehensive inventory of all duties, responsibilities and qualifications required of employees assigned to this job. Equivalent combination of education, experience, and skills may supplement above minimum job requirements.For U.S. Based jobs, please note that Rheem is unable to hire candidates to be employed in the following states: Alaska, District of Columbia, Hawaii, Idaho, Mississippi, Montana, New Mexico, North Dakota, or Vermont.Rheem and its subsidiaries do not accept unsolicited resumes from recruiters or employment agencies. In the absence of an executed Recruitment Services Agreement, there will be no obligation to any referral compensation or recruiter fee.",
+          "salary": "",
+          "posttime": "2026-03-06",
+          "url": "https://www.linkedin.com/jobs/view/systems-test-engineering-co-op-at-rheem-manufacturing-4365337480?refId=ryq3%2FqQ7Q3vSbW844z4jxg%3D%3D&trackingId=csh2w42%2FJYIEOpHNybOkkQ%3D%3D&position=25&pageNum=0",
+          "source": "linkedin"
+        },
+        "pairedItem": {
+          "item": 2,
+          "input": 1
+        }
+      },
+      {
+        "json": {
+          "title": "Product Manager - Payments (m/f/x)",
+          "company": "Tipico",
+          "location": "Karlsruhe, Baden-Württemberg, Germany",
+          "industry": "Gambling Facilities and Casinos",
+          "desc": "We are Tipico, Germany's leading sports betting provider and one of the most dynamic tech companies in the industry. We approach every challenge like a Championship match, with a mission to excite the arena and elevate the betting experience for every customer. Our culture is energetic and ambitious—we play as a team to win high, leave an impact, and commit to excellence. Fueled by our passion for the perfect product, we use the newest tech stack to get better every single day.At Tipico, we believe in owning our game. Are you ready to step onto the pitch, bring your best self, and become a champion? Then show us your game face – because we’re looking for a Product Manager - Payments (m/f/x) to join the team!Job DescriptionAt Tipico, we power seamless, secure, and high‑performance payment experiences for millions of sports betting and iGaming customers. As our new Product Manager - Payments (m/f/x), part of our Payment Technologies team, you will help shape the core systems that enable deposits, withdrawals, payment routing, and regulatory compliance across markets. Your playing field: Own the full lifecycle of payment products and features—from discovery to release and performance optimisationDefine Epics and User Stories, guiding development teams in a fast‑paced Agile environmentDrive strategic development of Tipico’s payment platform, including: Integration of new payment methods and PSPs Payment orchestration capabilities (routing, retries, failover, smart provider selection) Standardised, scalable payment APIs and backend services Own the customer payment journeys with the team, monitor and improve the key KPIs and conversion ratesCollaborate with architecture, engineering, business, and compliance teams to ensure accurate requirements, prioritisation, and regulatory alignmentPartner closely with other Product Managers to coordinate payment roadmap delivery across the organisationSpecify and monitor non‑functional requirements such as reliability, latency, fraud‑related KPIs, and transaction‑success performanceConduct UAT and sign off, ensuring quality, compliance, and operational readinessQualificationsWhich skills should you bring to the pitch:Payments Expertise. Solid experience in payments product management, ideally including PSPs, APMs, banking rails, settlement flows, and reconciliation fundamentalsPayment Orchestration. Hands-on experience or strong familiarity with payment orchestration platforms (routing logic, cascading, retries)Gateway Integrations. Experience working with payment gateway integrationsRisk &amp; Monitoring. Understanding of transaction monitoring systems and risk control mechanismsRegulatory Compliance. Familiarity with regulatory frameworks such as KYC/KYD, AML, PSD2, SCA, safeguarding, and market-specific rulesFinancial Processes. Strong understanding of financial processes and payment compliance topicsTechnical Collaboration. Ability to drive technical discussions with architects, developers, and risk/compliance stakeholdersAgile Delivery. Experience working in an Agile development environment with complex backend systemsCustomer Centricity. Customer-centric mindset and ability to translate user behaviour into payment product decisionsStakeholder Management. Basic project and stakeholder management skills, including planning, business cases, and issue trackingHigh-Risk Environments (Preferred). Background in iGaming or sports betting, or other high-scale, high-risk, real-time transaction environmentsAdditional InformationThis is how we score with you:Established International Group. We have a solid foundation on which to grow.Personal and Professional Growth. We offer you opportunities to develop and grow to unlock your potential. Relocation Support. To make your move to Karlsruhe as smooth as possible. Business Bike Leasing. We offer a sustainable commuting solution whilst also keeping you active! Corporate Pension Scheme (betriebliche Altersvorsorge). Secure your future! Join our corporate pension scheme, where we provide additional financial support. eGym. We encourage an active lifestyle, and to support this, we’ve partnered with an online sports platform that provides access to a variety of clubs and offers across Germany. Modern offices. Our very own Karlsruhe campus provides an open-plan space with the latest technology. Events. Sponsored Charity and Team gatherings; we like to have fun together as one team and reinforce our connections. Supportive Environment. We believe in collaboration and working together as a team, but we also give importance to the uniqueness of each and every one of us. Think a career at Tipico’s right for you?Apply now and join our winning team! If you have any questions or comments about this role, our TA team is happy to help you! Feel free to reach out to us on our social media channelsWe look forward to your application!",
+          "salary": "",
+          "posttime": "2026-03-06",
+          "url": "https://de.linkedin.com/jobs/view/product-manager-payments-m-f-x-at-tipico-4382109730?refId=GH1g%2B4wokw5R%2F5ZfRuofEQ%3D%3D&trackingId=DIzmP%2FIGAzc4HJibchvG9g%3D%3D&position=24&pageNum=0",
+          "source": "linkedin"
+        },
+        "pairedItem": {
+          "item": 3,
+          "input": 1
+        }
+      },
+      {
+        "json": {
+          "title": "HRC Internship",
+          "company": "American Honda Motor Company, Inc.",
+          "location": "Santa Clarita, CA",
+          "industry": "Motor Vehicle Manufacturing",
+          "desc": "Job PurposeDevelopment Engineer InternWill assist with engine development and durability testing on the test cell and report writing. Prepare and review test plan and if cell is ready as planned. Will learn how to prepare test cell/plans, instrumentation calibration setting and cell maintenance. Some data analysis and Matlab experience preferred.Design Engineer InternWill create Design Manuals, along with providing support with Part Design, Drawings, and Assembly Manuals and other design-related tasks. Students will understand fundamental design industry practices and gain experience learning and using CAD (Catia) as well understand the unique design considerations and standards related to specific engine subsystems.Electrical Engineer InternWill assist in drafting electrical schematics and layouts for upcoming projects, assist with PCB testing and documentation process. Knowledgeable with Matlab/Simulink/Stateflow and some programming language (C/C++) used to produce code. Must have some knowledge and classroom experience with basic controls and logic design; model-based embedded-software implementation and code generation.Battery and E-machine/EV InternWill be responsible for testing, controlling, validating powertrain E-machine and integrating E-machine within Powertrain (hybrid or Battery electric Vehicle). Must have basic understanding of lithium-ion battery behavior and properties, circuit models, BMS algorithms and state-space modelsAI Intern: Will assist in utilizing AI, data storage, SharePoint and Co Pilot. Understanding of Machine learning algorithms, programming (Python/R), analytics.Quality Assurance Engineer InternAssisted with routine quality inspections and data collection to support ongoing process improvement, recording inspection results, labeling materials, and maintaining organized documentation. Supported daily production activities by preparing materials, monitoring equipment status, and reporting issues to supervisors. Helped maintain accurate documentation, including test records, audit findings, and quality reports. Validate raw stock to vendor certs and part drawings. Use hand measurement tooling to do basic validation of product.Performance Applications Engineer InternWill assist in the development and validation of embedded powertrain control strategies for internal combustion engines and hybrid powertrain systems. The intern will work closely with controls and calibration engineers on model-based development, physical system modeling, and calibration tool creation, using industry standard tools such as Matlab/Simulink and Python.Key AccountabilitiesQualifications, Experience, and SkillsJob DimensionsDecisions ExpectedWorking Conditions",
+          "salary": "",
+          "posttime": "2026-03-07",
+          "url": "https://www.linkedin.com/jobs/view/hrc-internship-at-american-honda-motor-company-inc-4382338256?refId=ryq3%2FqQ7Q3vSbW844z4jxg%3D%3D&trackingId=8Dbv1jCNTJ%2Fn53c4%2BgArng%3D%3D&position=5&pageNum=0",
+          "source": "linkedin"
+        },
+        "pairedItem": {
+          "item": 4,
+          "input": 1
+        }
+      },
+      {
+        "json": {
+          "title": "Project Management Intern (IT Intern 3)",
+          "company": "Mission Technologies, a division of HII",
+          "location": "Norfolk, VA",
+          "industry": "Defense and Space Manufacturing",
+          "desc": "Requisition Number: 27483Required Travel: 0 - 10%Employment Type: Part Time/Hourly/Non-ExemptAnticipated Salary Range: $43,127.00 - $52,000.00Security Clearance: Ability to ObtainLevel of Experience: InternThis opportunity resides with Global Security (GS). Mission Technologies’ Global Security (GS) group comprises live, virtual, constructive (LVC) solutions; fleet sustainment; nuclear and environmental; and Australia business.As a trusted partner to our military customers, HII designs, develops and operates the largest LVC enterprise that prepares warfighters for cross-domain battle. With advanced technologies to enable mission readiness, HII understands that preparation requires full coordination—not readiness in piece-parts.For more than 40 years, the U.S. Navy has entrusted HII to maintain and modernize the vast majority of its fleet. With a holistic approach to life-cycle maritime defense systems—from small watercraft to submarines, surface combatants and aircraft carriers—HII ensures a high state of readiness.HII supports the Department of Energy’s national security mission through the management and operation of its sites, as well as the safe cleanup of legacy waste across the country. HII meets clients’ toughest nuclear and environmental challenges.Meet HII’s Mission Technologies DivisionOur team of more than 7,000 professionals worldwide delivers all-domain expertise and advanced technologies in service of mission partners across the globe. Mission Technologies is leading the next evolution of national defense – the data evolution - by accelerating a breadth of national security solutions for government and commercial customers. Our capabilities range from C5ISR, AI and Big Data, cyber operations and synthetic training environments to fleet sustainment, environmental remediation and the largest family of unmanned underwater vehicles in every class. Find the role that’s right for you. Apply today. We look forward to meeting you.To learn more about Mission Technologies, click here for a short video: https://vimeo.com/732533072Job DescriptionAre you a mission‑driven individual looking for a career that truly matters? This is more than your average mission.Join HII – Mission Technologies and make an impact by supporting our Global Security team in managing multiple small to mid‑scale IT and software systems projects right here in Hampton Roads.Our Project Management Support Internship is a temporary role designed to prepare college students for entry into the workforce through hands‑on experience and training aligned with both their field of study and the needs of our business. This opportunity is open to rising juniors and seniors who are available to work full-time (40 hours per week) for at least 10 weeks during summer 2026.Essential Job Responsibilities Provide project management support for complex IT and Software Systems engineering projects. Coordinate with internal leaders to determine project responsibilities by identifying project phases, resource requirements, and other necessary elements. Assist in maintaining project schedules by monitoring project progress, coordinating activities and resolving problems. Provide support in coordinating amongst various teams in different engineering disciplines to present a unified, integrated product to project stakeholders. Assist in preparing project status reports by collecting, analyzing, and summarizing information and trends, and recommending actions. In support of assigned functional area, perform professional administrative work of an introductory nature gradually increasing in level of difficulty and responsibility. Identify, analyze, and capture project specific lessons learned. Perform work that is pertinent to field study. Performs additional duties and responsibilities as assigned.Minimum Qualifications High School Diploma or equivalent + Must be working towards a Bachelor's degree with between 40% and 60% of the required credits completed. Must have an overall cumulative GPA of 3.0 out of 4.0 or higher while participating in this internship. Must have the ability to obtain and maintain a DOD secret clearance. Preferred RequirementsExcellent writing, communication and listening skills.Critical thinking and problem-solving skills.Must be diligent, hardworking and a fast learner.Desires to gain professional experience and is eager to learn.Familiarity with Microsoft Excel.Preference for Business, Finance, Accounting, Information Technology, Software Engineering, or related curriculum. Physical RequirementsJob performance will normally require only minor lifting and carrying of boxes of records or equipment.HII is more than a job - it’s an opportunity to build a new future. We offer competitive benefits such as best-in-class medical, dental and vision plan choices; wellness resources; employee assistance programs; Savings Plan Options (401(k)); financial planning tools, life insurance; employee discounts; paid holidays and paid time off; tuition reimbursement; as well as early childhood and post-secondary education scholarships. Bonus/other non-recurrent compensation is occasionally offered for qualified positions, and if applicable to this role will be addressed by the recruiter at the screening phase of application.Why HIIWe build the world’s most powerful, survivable naval ships and defense technology solutions that safeguard our seas, sky, land, space and cyber. Our workforce includes skilled tradespeople; artificial intelligence, machine learning (AI/ML) experts; engineers; technologists; scientists; logistics experts; and business administration professionals.Recognized as one of America’s top large company employers, we are a values and ethics driven organization that puts people’s safety and well-being first. Regardless of your role or where you serve, at HII, you’ll find a supportive and welcoming environment, competitive benefits, and valuable educational and training programs for continual career growth at every stage of your career.Together we are working to ensure a future where everyone can be free and thrive.All qualified applicants will receive consideration for employment without regard to race, color, religion, gender, gender identity or expression, sexual orientation, national origin, physical or mental disability, age, or veteran status or any other basis protected by federal, state, or local law.Do You Need Assistance? If you need a reasonable accommodation for any part of the employment process, please send an e-mail to buildyourcareer@hii-co.com and let us know the nature of your request and your contact information. Reasonable accommodations are considered on a case-by-case basis. Please note that only those inquiries concerning a request for reasonable accommodation will be responded to from this email address. Additionally, you may also call 1-844-849-8463 for assistance. Press #3 for HII Mission Technologies.",
+          "salary": "",
+          "posttime": "2026-03-06",
+          "url": "https://www.linkedin.com/jobs/view/project-management-intern-it-intern-3-at-mission-technologies-a-division-of-hii-4381980088?refId=ryq3%2FqQ7Q3vSbW844z4jxg%3D%3D&trackingId=kUWyybSQaP5nSweNCAmi6Q%3D%3D&position=24&pageNum=0",
+          "source": "linkedin"
+        },
+        "pairedItem": {
+          "item": 5,
+          "input": 1
+        }
+      },
+      {
+        "json": {
+          "title": "Co-Op (Fall Term)",
+          "company": "Curtiss-Wright Corporation",
+          "location": "Pittsburgh, PA",
+          "industry": "Defense and Space Manufacturing",
+          "desc": "We are looking for Interns and/or Co-ops for the Fall semester at our Pittsburgh (Cheswick) location!Now Hiring For:Mechanical Engineering Interns and Co-opsHiring For The Following Departments:Defense Business Segment – multiple positionsCommercial NuclearAnalytical EngineeringStress and Thermal EngineeringManufacturing Engineering – multiple positionsElectrical Engineering Interns and Co-opsHiring For The Following Departments:Facilities Electrical EngineeringEngineering Processes and Resources – Product design – multiple positionsIndustrial Engineering Interns and Co-opsHiring For The Following Positions:Continuous Improvement – Lean Manufacturing Initiatives (Kaizen, 5S etc)Project Control Analyst – Developing Project SchedulesLogistics and Inventory ControlSupply Chain, Logistics , Business, IT and Accounting Co-ops and InternsHiring For The Following Positions:Buyer – multiple positionsContracts Administration – working in our Contracts DepartmentAccountingProject Control Analyst – developing project schedulesSupply Chain Data AnalystWelding Engineering Intern or Co-op Who We Are:Our ValuesEnvironmental, Social and GovernanceEMD a business unit of Curtiss-Wright in Cheswick, PA designs, manufactures, tests, and provides after-market support for the most advanced, proven and reliable critical function pumps, motors, generators, seals, control rod drive mechanisms and power conditioning electronics available anywhere in the world today. Curtiss-Wright EMD has a long-standing and distinguished reputation for the design, development, manufacture, and qualification of critical-function machining solutions for the United States Navy and the commercial nuclear utility industry. http://www.emd.cwfc.com/No unsolicited agency submittals please. Agency partners must be invited to participate in a search by our Talent Acquisition Team and have signed terms in place prior to any submittal. Resumes submitted directly to any Curtiss-Wright employee or affiliate will not qualify for fee payment, and therefore become the property of Curtiss-Wright. Compliance StatementThis position may require exposure to export-controlled information and subject to additional security screening. In the event information provided during the security screening reveals ineligibility to access export-controlled information, any offer of employment may be reconsidered or withdrawn.Curtiss-Wright values diversity in the workplace. All qualified applicants will receive consideration for employment without regard to race, color, religion, sex, sexual orientation, gender identity, national origin, disability or protected veteran status.If you require accommodation due to a disability at any time during the recruitment and/or assessment process, please contact Talent Acquisition and we will make all reasonable efforts to accommodate your request.",
+          "salary": "",
+          "posttime": "2026-03-05",
+          "url": "https://www.linkedin.com/jobs/view/co-op-fall-term-at-curtiss-wright-corporation-4223518313?refId=ryq3%2FqQ7Q3vSbW844z4jxg%3D%3D&trackingId=q1DXs%2BiDlmCr3QS4jKpmiw%3D%3D&position=23&pageNum=0",
+          "source": "linkedin"
+        },
+        "pairedItem": {
+          "item": 6,
+          "input": 1
+        }
+      },
+      {
+        "json": {
+          "title": "Stirista Intern",
+          "company": "Stirista",
+          "location": "Pompano Beach, FL",
+          "industry": "Advertising Services",
+          "desc": "DescriptionJob Summary: Stirista offers a robust internship program with hands-on responsibilities. The goal of our program is to provide interns with substantive, meaningful work experience to conclude the internship period with demonstrable skills in their area of interest. You will be given the opportunity to learn closely with staff and assist with various departmental functions across the Stirista organization. This is a part-time, paid internship position.Duties/ResponsibilitiesAssist with day-to-day operational tasks, including project tracking, documentation, and cross-functional communication to ensure departmental goals are met on schedule.Thoughtfully receive, respond to, and execute requests in a friendly and timely manner.Learn from internal subject matter experts about our services/products to deepen your own expertise.Communicate (written and oral) with clients and colleagues in an open, clear, friendly, confident manner.Takes initiative, anticipates needs, and recommends solutions proactivelyDemonstrates strong attention to detail and a focus on results.Shows poise under pressure in a fast-paced, deadline-driven environment. Stay organized and manage multiple projects and deadlines at once. Prioritize and re-prioritize as new information rolls in.Actively participate in team meetings and culture-building initiatives, contributing creative ideas and an optimistic mindset to group discussions.Collaborate with mentors to set personal learning goals and track progress on key skill sets throughout the internship period.Perform other duties as assigned.RequirementsRequired Skills/Abilities: To qualify for the Stirista Internship Program candidates must meet the following qualifications:Must be available to commit at minimum 24 hours per week for the duration of the internship (May 19th - August 7th). Must be currently enrolled as a part-time or full-time college student entering junior or senior year of study. Candidates must be currently pursuing a degree in Marketing, Information Technology, Data Analytics, Human Resources, Accounting/Finance or a degree in a related field (transcript may be required for verification). Strong interpersonal, verbal, and written communication skills.Candidates must show initiative and possess the willingness to learn. Demonstrates proficiency using a personal computer (PC) and communication tools such as email, internet and Google Suite of products.Departmental OpeningsMarketing &amp; PR Intern-Support the front lines of our brand through Lead Gen, PR outreach, and social media management. Gain a deep understanding of B2B operations and master digital lead generation. Client Services Intern-Assist with campaign performance reporting, deck building, and preparing for high-level client meetings. Learn the art of client management and develop valuable skills related to teamwork, project management, and managing cross-functional relationshipsCreative &amp; Strategy Intern-A dual-threat role! You’ll handle everything from UX design and social graphics to SEO research and media strategy. Build a diverse portfolio covering both high-level marketing strategy and hands-on creative execution.Data Operations Intern-Get hands-on with the engine of our company by assisting with counts request completion and data management. Gain technical proficiency in data processing and operational workflows.Product Management Intern-Focus on the build! You’ll develop product requirements, perform testing, and explore AI-driven development. Experience the full product development lifecycle in a modern, AI-forward environment.Audience Solutions Intern--Dive into high-impact data projects, including segment description reviews, storefront cleanup, and building a custom \"Persona taxonomy\" to map the diverse buying habits of real-world consumers. Master marketing strategy for syndicated audiences, learning exactly how audiences are built, described, and deployed across the industry.Software Engineering/PMO Intern- Bridge the gap between tech and business by assisting with project analysis and documentation. Master Agile development frameworks and see how software projects move from idea to execution.Stirista CultureAt Stirista, we foster a collaborative and inclusive environment where innovation and teamwork are highly valued. We are committed to employee growth and development and believe in recognizing and rewarding hard workOur Mission is to help marketers generate revenue with our identity-level data. As marketers ourselves, we know that one-size-fits-all solutions and decayed data don’t work, so we built our modular and real-time OMNA Identity Graph from the ground up to arm you with marketing data that actually works.Vision: We remove common roadblocks to help companies acquire, retain, and activate customers effectively, efficiently, and ethically. We believe in a fun, vibrant environment where our unmatched teamwork leads to better innovation for our clients.Values: At the heart of our company culture, we encourage every team member to make a STIR. This means setting ambitious goals, embracing adaptability, fostering optimism, and maintaining the utmost respect and integrity.Strive  – Push for progress. We work toward excellence with focus, energy, and a drive to improve every day.Think – Stay open. We adapt, challenge assumptions, and approach change with curiosity, not resistance.Inspire – Lead with belief. We bring positivity into the room, build momentum, and help others see what’s possible. .Rally - Show respect. We back each other, listen well, and build strong, trusted relationships that last.Other DutiesPlease note this job description is not designed to cover or contain a comprehensive listing of activities, duties or responsibilities that are required of the employee for this job. Duties, responsibilities, and activities may change at any time with or without notice.Physical RequirementsProlonged periods of sitting at a desk and working on a computer.Must be able to lift up-to 15 pounds at times.Ability to adhere to the company's hybrid work policy. This position requires a minimum of three days per week in one of our offices for employees residing within a 30-mile radius of the following locations: San Antonio, TX (HQ), Manhattan, NY, Hauppauge, NY, Boston, MA, or Pompano Beach, FL.Salary Description$17.00",
+          "salary": "",
+          "posttime": "2026-03-05",
+          "url": "https://www.linkedin.com/jobs/view/stirista-intern-at-stirista-4378874904?refId=ryq3%2FqQ7Q3vSbW844z4jxg%3D%3D&trackingId=blzEnW96sTmdqSp2XQ57TA%3D%3D&position=22&pageNum=0",
+          "source": "linkedin"
+        },
+        "pairedItem": {
+          "item": 7,
+          "input": 1
+        }
+      },
+      {
+        "json": {
+          "title": "Platform Campaign Project Intern (TikTok- Operations) - 2026 Start (BS/MS)",
+          "company": "TikTok",
+          "location": "Seattle, WA",
+          "industry": "Entertainment Providers",
+          "desc": "ResponsibilitiesAbout the TeamThe commerce industry has seen tremendous growth in recent years and has become a hotly contested space amongst leading Internet companies, and its future growth cannot be underestimated. We aim to bring discovery, inspiration, and joy back to shopping by making TikTok the commerce channel of choice for merchants, creators, and affiliates.You've seen the virality and impact of #TikTokMadeMeBuyIt. Come join the team that is helping scale that phenomenon, and pioneer Content &amp; Creator commerce in the US. We aim to bring discovery, inspiration, and joy back to shopping by making TikTok the leading, on-trend commerce platform of choice for brands, creators, and shoppers. We are an entrepreneurial team, passionate about shaping the future of shopping.The TikTok Shop US operation team aims to deliver high quality products together with a unique customer experience via TikTok. The team is responsible for building the TikTok Ecommerce partnership for the TikTok e-commerce business in the US. With more than 1 billion loyal users globally, we believe TikTok is an ideal platform to deliver a brand new and better e-commerce experience to our users. We are looking for passionate and talented people to join us to build an e-commerce ecosystem that is innovative, secure and intuitive for our users together.As a project intern, you will have the opportunity to engage in impactful short-term projects that provide you with a glimpse of professional real-world experience. You will gain practical skills through on-the-job learning in a fast-paced work environment and develop a deeper understanding of your career interests.Applications will be reviewed on a rolling basis - we encourage you to apply early.Successful candidates must be able to commit to at least 3 months long internship period.Responsibilities: Act as a bridge between the Operations and Product teams to identify workflow gaps, optimize product experience, and support iterative improvement of product features and processes. Analyze operational data to uncover insights, diagnose product issues, and support data-driven decision-making. Collaborate with the product team to refine product requirements, improve user journeys, and support the design of scalable product solutions. Participate in prioritization discussions by consolidating feedback from operations, users, and cross-functional stakeholders. Support cross-team communication across regions and time zones, ensuring smooth delivery of product development, testing, launch, and continuous optimization.QualificationsMinimum Qualifications: Currently Pursuing an Undergraduate/Master in in Business, Statistics, Computer Science, Data Science, Engineering, Business Analytics, or related fields.Proven skills in logical thinking and data analytics skills; able to break down complex problems and propose actionable solutions. Proven skills communication, organization, and project execution abilities; proactive, responsible, and capable of driving tasks independently.Preferred Qualifications: Proven experience in marketing/E-commerce related internships/projects is a plus.By submitting an application for this role, you accept and agree to our global applicant privacy policy, which may be accessed here: https://careers.tiktok.com/legal/privacyJob Information【For Pay Transparency】Compensation Description (Hourly) - Campus InternThe hourly rate range for this position in the selected city is $23.75- $23.75.Benefits may vary depending on the nature of employment and the country work location. Interns have day one access to health insurance, life insurance, wellbeing benefits and more. Interns also receive 10 paid holidays per year and paid sick time (56 hours if hired in first half of year, 40 if hired in second half of year). Interns who are not working 100% remote may also be eligible for housing allowance.The Company reserves the right to modify or change these benefits programs at any time, with or without notice.For Los Angeles County (unincorporated) Candidates:Qualified applicants with arrest or conviction records will be considered for employment in accordance with all federal, state, and local laws including the Los Angeles County Fair Chance Ordinance for Employers and the California Fair Chance Act. Our company believes that criminal history may have a direct, adverse and negative relationship on the following job duties, potentially resulting in the withdrawal of the conditional offer of employment: Interacting and occasionally having unsupervised contact with internal/external clients and/or colleagues; Appropriately handling and managing confidential information including proprietary and trade secret information and access to information technology systems; and Exercising sound judgment.About TikTokTikTok is the leading destination for short-form mobile video. At TikTok, our mission is to inspire creativity and bring joy. TikTok's global headquarters are in Los Angeles and Singapore, and we also have offices in New York City, London, Dublin, Paris, Berlin, Dubai, Jakarta, Seoul, and Tokyo.Why Join UsInspiring creativity is at the core of TikTok's mission. Our innovative product is built to help people authentically express themselves, discover and connect – and our global, diverse teams make that possible. Together, we create value for our communities, inspire creativity and bring joy - a mission we work towards every day.We strive to do great things with great people. We lead with curiosity, humility, and a desire to make impact in a rapidly growing tech company. Every challenge is an opportunity to learn and innovate as one team. We're resilient and embrace challenges as they come. By constantly iterating and fostering an \"Always Day 1\" mindset, we achieve meaningful breakthroughs for ourselves, our company, and our users. When we create and grow together, the possibilities are limitless. Join us.Diversity &amp; InclusionTikTok is committed to creating an inclusive space where employees are valued for their skills, experiences, and unique perspectives. Our platform connects people from across the globe and so does our workplace. At TikTok, our mission is to inspire creativity and bring joy. To achieve that goal, we are committed to celebrating our diverse voices and to creating an environment that reflects the many communities we reach. We are passionate about this and hope you are too.TikTok AccommodationTikTok is committed to providing reasonable accommodations in our recruitment processes for candidates with disabilities, pregnancy, sincerely held religious beliefs or other reasons protected by applicable laws. If you need assistance or a reasonable accommodation, please reach out to us at https://tinyurl.com/RA-request",
+          "salary": "",
+          "posttime": "2026-03-10",
+          "url": "https://www.linkedin.com/jobs/view/platform-campaign-project-intern-tiktok-operations-2026-start-bs-ms-at-tiktok-4330473741?refId=ryq3%2FqQ7Q3vSbW844z4jxg%3D%3D&trackingId=W%2FkH884v31evAI0CVxklqA%3D%3D&position=21&pageNum=0",
+          "source": "linkedin"
+        },
+        "pairedItem": {
+          "item": 8,
+          "input": 1
+        }
+      },
+      {
+        "json": {
+          "title": "Project Management Intern (IT Intern 3)",
+          "company": "HII",
+          "location": "Norfolk, VA",
+          "industry": "Accounting",
+          "desc": "Requisition Number: 27483Required Travel: 0 - 10%Employment Type: Part Time/Hourly/Non-ExemptAnticipated Salary Range: $43,127.00 - $52,000.00Security Clearance: Ability to ObtainLevel of Experience: InternThis opportunity resides with Global Security (GS). Mission Technologies' Global Security (GS) group comprises live, virtual, constructive (LVC) solutions; fleet sustainment; nuclear and environmental; and Australia business.As a trusted partner to our military customers, HII designs, develops and operates the largest LVC enterprise that prepares warfighters for cross-domain battle. With advanced technologies to enable mission readiness, HII understands that preparation requires full coordination-not readiness in piece-parts.For more than 40 years, the U.S. Navy has entrusted HII to maintain and modernize the vast majority of its fleet. With a holistic approach to life-cycle maritime defense systems-from small watercraft to submarines, surface combatants and aircraft carriers-HII ensures a high state of readiness.HII supports the Department of Energy's national security mission through the management and operation of its sites, as well as the safe cleanup of legacy waste across the country. HII meets clients' toughest nuclear and environmental challenges.Meet HII's Mission Technologies DivisionOur team of more than 7,000 professionals worldwide delivers all-domain expertise and advanced technologies in service of mission partners across the globe. Mission Technologies is leading the next evolution of national defense - the data evolution - by accelerating a breadth of national security solutions for government and commercial customers. Our capabilities range from C5ISR, AI and Big Data, cyber operations and synthetic training environments to fleet sustainment, environmental remediation and the largest family of unmanned underwater vehicles in every class. Find the role that's right for you. Apply today. We look forward to meeting you.To learn more about Mission Technologies, click here for a short video: https://vimeo.com/732533072Job DescriptionAre you a mission-driven individual looking for a career that truly matters? This is more than your average mission.Join HII - Mission Technologies and make an impact by supporting our Global Security team in managing multiple small to mid-scale IT and software systems projects right here in Hampton Roads.Our Project Management Support Internship is a temporary role designed to prepare college students for entry into the workforce through hands-on experience and training aligned with both their field of study and the needs of our business. This opportunity is open to rising juniors and seniors who are available to work full-time (40 hours per week) for at least 10 weeks during summer 2026.Essential Job ResponsibilitiesProvide project management support for complex IT and Software Systems engineering projects. Coordinate with internal leaders to determine project responsibilities by identifying project phases, resource requirements, and other necessary elements. Assist in maintaining project schedules by monitoring project progress, coordinating activities and resolving problems. Provide support in coordinating amongst various teams in different engineering disciplines to present a unified, integrated product to project stakeholders. Assist in preparing project status reports by collecting, analyzing, and summarizing information and trends, and recommending actions. In support of assigned functional area, perform professional administrative work of an introductory nature gradually increasing in level of difficulty and responsibility. Identify, analyze, and capture project specific lessons learned. Perform work that is pertinent to field study. Performs additional duties and responsibilities as assigned. Minimum QualificationsHigh School Diploma or equivalent + Must be working towards a Bachelor's degree with between 40% and 60% of the required credits completed. Must have an overall cumulative GPA of 3.0 out of 4.0 or higher while participating in this internship. Must have the ability to obtain and maintain a DOD secret clearance. Preferred RequirementsExcellent writing, communication and listening skills. Critical thinking and problem-solving skills. Must be diligent, hardworking and a fast learner. Desires to gain professional experience and is eager to learn. Familiarity with Microsoft Excel. Preference for Business, Finance, Accounting, Information Technology, Software Engineering, or related curriculum. Physical RequirementsJob performance will normally require only minor lifting and carrying of boxes of records or equipment.HII is more than a job - it's an opportunity to build a new future. We offer competitive benefits such as best-in-class medical, dental and vision plan choices; wellness resources; employee assistance programs; Savings Plan Options (401(k)); financial planning tools, life insurance; employee discounts; paid holidays and paid time off; tuition reimbursement; as well as early childhood and post-secondary education scholarships. Bonus/other non-recurrent compensation is occasionally offered for qualified positions, and if applicable to this role will be addressed by the recruiter at the screening phase of application.Why HIIWe build the world's most powerful, survivable naval ships and defense technology solutions that safeguard our seas, sky, land, space and cyber. Our workforce includes skilled tradespeople; artificial intelligence, machine learning (AI/ML) experts; engineers; technologists; scientists; logistics experts; and business administration professionals.Recognized as one of America's top large company employers, we are a values and ethics driven organization that puts people's safety and well-being first. Regardless of your role or where you serve, at HII, you'll find a supportive and welcoming environment, competitive benefits, and valuable educational and training programs for continual career growth at every stage of your career.Together we are working to ensure a future where everyone can be free and thrive.All qualified applicants will receive consideration for employment without regard to race, color, religion, gender, gender identity or expression, sexual orientation, national origin, physical or mental disability, age, or veteran status or any other basis protected by federal, state, or local law.Do You Need Assistance?If you need a reasonable accommodation for any part of the employment process, please send an e-mail to buildyourcareer@hii-co.com and let us know the nature of your request and your contact information. Reasonable accommodations are considered on a case-by-case basis. Please note that only those inquiries concerning a request for reasonable accommodation will be responded to from this email address. Additionally, you may also call 1-844-849-8463 for assistance. Press #3 for HII Mission Technologies.",
+          "salary": "",
+          "posttime": "2026-03-08",
+          "url": "https://www.linkedin.com/jobs/view/project-management-intern-it-intern-3-at-hii-4381399776?refId=ryq3%2FqQ7Q3vSbW844z4jxg%3D%3D&trackingId=NjYYF5RQOIJWvQXhPpLgrQ%3D%3D&position=18&pageNum=0",
+          "source": "linkedin"
+        },
+        "pairedItem": {
+          "item": 9,
+          "input": 1
+        }
+      }
+    ],
+    "Resume and Position analysis": [
+      {
+        "json": {
+          "output": {
+            "posted_at": "2026-03-06",
+            "location": "Stuttgart, Baden-Württemberg, Germany",
+            "ai_pros": "业务前景：IT战略与企业数字化咨询属于高阶领域，Platinion作为BCG的IT实施子公司，主要负责落地高精尖的数字化转型、架构设计和复杂产品实施，属于行业前沿。\n跳板价值：极高。对于在德求职的中国背景候选人，BCG Platinion的品牌背书是顶级背书，能极大提升简历在德国核心工业区的认可度。如果能忍受3个月的高压与社交，这将是你进入德国核心企业高阶IT岗的黄金门票。",
+            "ai_comp": "1. 优势：你拥有6年的软件、企业工具及数字化领域实战经验，这使得在“IT架构分析、IT价值链优化”等JD核心任务上，你具备远高于普通学生的能力和深度。\n2. Gap：\n   - 学历门槛：JD明确要求“处于Master在读阶段”。如果你目前不是在读状态，申请此岗即存在硬性条件不符。\n   - 工作性质冲突：咨询工作（尤其是BCG这类顶尖公司）本质上是高度依赖沟通、汇报、Client管理的工作，这与你“拒绝重度沟通和Politics”的职业目标存在直接冲突。\n   - 职级错配：你有6年资深经验，申请Visiting Associate（通常面向学生）存在职业路径下沉的风险，虽可作为跳板，但并非职业阶梯上的最优进阶。",
+            "industry": "Business Consulting and Services",
+            "title": "Visiting Associate IT Consulting (all genders) - BCG Platinion",
+            "url": "https://de.linkedin.com/jobs/view/visiting-associate-it-consulting-all-genders-bcg-platinion-at-bcg-platinion-4238478993?refId=mhoa1BgU8nOOj5iv5zSKkA%3D%3D&trackingId=mNtpIce7p6Anj40AtIKQHQ%3D%3D&position=25&pageNum=0",
+            "ai_labels": "适合岗位（作为跳板）,目标岗位（职能方向匹配）",
+            "ai_language": "德英双语流利（必须具备复杂专业话题的沟通能力）",
+            "ai_coach": "1. 简历重塑：此岗位明确要求处于Master在读阶段，这是最大的合规卡点。建议您在简历显眼位置标注当前的学业状态（若尚未注册Master，此岗位申请大概率会被系统自动筛除）。若已在读，需强调这6年中国工作经验带来的“行业洞察力”和“复杂项目解决能力”，这使你远超一般学生候选人。\n2. 动机转化：由于你拒绝重度政治（Politics），咨询业的高强度沟通环境对你来说是巨大挑战。在投递时，不要仅强调你的技术能力，而要强调你作为“执行者”和“分析师”的角色，即你擅长在结构化框架下交付IT解决方案，而非作为社交润滑剂。\n3. 策略定位：将此实习视为进入德国头部咨询圈的“跳板”，而非终点。利用3个月时间通过Platinion的背书和项目积累德国本土IT架构与企业流程的Know-how，建立Network，实习期满后直接平跳到德国本土的头部工业巨头（如博世、梅赛德斯-奔驰，特别是其Stuttgart基地）从事内部数字化转型或产品管理岗位，那才是你的“长久舒适区”。",
+            "category": "Internship (Visiting Associate)",
+            "ai_requirements": "核心岗位要求翻译：\n1. 协助顾问团队进行IT战略、架构设计及方案落地。\n2. 负责IT架构分析、评估及IT价值链优化。\n3. 准备项目相关分析、数据处理及汇报演示（涉及大量的文档工作）。\n能力拆解：\n- 学术背景：CS或信息管理类硕士在读（硬性）。\n- 技术功底：扎实的软件开发或IT项目管理实习经历。\n- 软技能：极强的分析与归纳能力，精通MS Office办公套件（作为咨询工具），能够在全球化、跨职能团队中协作。\n- 沟通：能够将复杂IT课题转化为清晰的商业语言（德/英）。",
+            "ai_comp_score": 65,
+            "company": "BCG Platinion"
+          }
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      },
+      {
+        "json": {
+          "output": {
+            "posted_at": "2026-03-09",
+            "url": "https://de.linkedin.com/jobs/view/product-designer-at-niulix-4381821758?refId=GH1g%2B4wokw5R%2F5ZfRuofEQ%3D%3D&trackingId=dOa7FVYdXOx%2BqOvSHHlOpA%3D%3D&position=25&pageNum=0",
+            "category": "Full-time",
+            "ai_language": "德英双语无障碍（要求具备在德国当地进行高频协作的设计沟通能力）",
+            "ai_labels": "目标岗位,适合岗位",
+            "location": "Berlin, Berlin, Germany",
+            "company": "Niulix",
+            "ai_comp_score": 85,
+            "ai_requirements": "核心要求：1. 3年以上产品与UX设计经验；2. 具备 crafting UI, flows, prototypes 的实操能力；3. 极强的独立工作能力 (Autonomous)，能够从概念到发布全权把控产品；4. 必须身处柏林或愿意搬迁，并持有德国有效工签。分析：该岗位要求一名具备“全栈”心态的设计师，不仅要画图，还要具备产品思维，能直接与创始人及工程师沟通，是典型的小团队核心角色。",
+            "ai_pros": "业务属于人力资源科技（HR Tech），在数字化转型背景下属于稳健型增长领域。作为Lead角色在早期Startup中能深度参与产品架构，具备极高的技术栈深度，不仅是优质跳板，也是深入德国ToB SaaS生态的极佳机会。",
+            "industry": "Human Resources Services",
+            "ai_coach": "1. 针对“拒绝政治/重沟通”的顾虑，在投递时强调你对“Product-led Growth”和“以数据驱动设计”的认同，这在德国Startup中是最高效的沟通语言，能帮你避开无效社交。 2. 突出你的6年企业数字化背景（尤其是低代码/工具类产品经验），将其定义为“能直接从需求转化为复杂工程逻辑的设计能力”，这对早期创业公司极具吸引力。 3. 在面试中利用你的双语优势，体现你对德国B2B用户心理的理解，这比纯设计技能更难得。 4. 重点提及你对Ownership的理解，德国Startup非常看重独立工作能力（Self-starter），这与你的背景完全契合。",
+            "title": "Product Designer (Product Design Lead)",
+            "ai_comp": "【优势】: 6年工作经验远超3年要求，背景中的企业工具、低代码及项目管理经验能直接复用至B2B HR产品设计中，对B2B产品的复杂性有天然理解力。\n【Gap】: 简历未提及具体的UI/原型工具（如Figma）熟练程度；“Lead” Title 要求极强的独当一面能力，需在面试中证明你曾独立负责过端到端产品生命周期。"
+          }
+        },
+        "pairedItem": {
+          "item": 1
+        }
+      },
+      {
+        "json": {
+          "output": {
+            "location": "Fort Smith, AR / Lewisville, TX (USA)",
+            "ai_language": "英语要求：专业工作语言水平；无德语要求（美国岗位）。",
+            "company": "Rheem Manufacturing",
+            "ai_requirements": "核心要求拆解：1. 硬件测试：组装实验电路，验证HVAC原型机，使用示波器等仪器；2. 软件测试：编写自动化脚本（Python），维护系统软件；3. 执行力：在资深工程师指导下完成测试报告和系统配置；4. 身份门槛：必须是计算机或工程类的在读全日制学生。",
+            "ai_pros": "行业属于传统制造业（HVAC暖通空调），虽然涉及数字化升级，但岗位本身是偏底层的硬件测试实习，对于有6年经验的你来说，没有任何职业发展跳板价值。如果想进德国工业制造业，应关注软件工程或产品数字化转型相关的正式职位（Permanent Role）。",
+            "industry": "Manufacturing (HVAC)",
+            "url": "https://www.linkedin.com/jobs/view/systems-test-engineering-co-op-at-rheem-manufacturing-4365337480?refId=ryq3%2FqQ7Q3vSbW844z4jxg%3D%3D&trackingId=csh2w42%2FJYIEOpHNybOkkQ%3D%3D&position=25&pageNum=0",
+            "ai_coach": "该岗位完全不适合你，请立即停止申请。理由有三：1. 这是一个“Co-Op”实习岗，通常只面向在读的本科或研究生学生，你已有6年工作经验，属于“过度资深”，HR系统会自动过滤；2. 岗位核心是硬件/嵌入式系统测试（需要操作示波器、电路板、物理接线），这与你的软件产品/数字化背景完全不对口；3. 工作地点在美国（阿肯色州或德州），这违反了你“在德求职”的核心诉求。建议将精力转向德国工业4.0、数字化转型或B2B SaaS类公司的产品经理或解决方案专家岗位，利用你6年的数字化产品经验。",
+            "ai_comp_score": 10,
+            "category": "Internship/Co-Op",
+            "ai_labels": "不适合的岗位",
+            "title": "Systems Test Engineering Co-Op",
+            "posted_at": "2026-03-06",
+            "ai_comp": "优势：仅有Python编程基础这一项重叠。Gap：1. 学历要求：JD明确要求在读学生，你已毕业多年；2. 核心技能：JD要求硬件电路、电压测量、示波器使用及物理组装，你具备的是软件/企业工具/数字化背景，技能树完全错位；3. 职责定位：该岗位为执行导向（组装电路、做实验），而你的背景偏向逻辑层面的产品与流程管理。匹配度极低。"
+          }
+        },
+        "pairedItem": {
+          "item": 2
+        }
+      },
+      {
+        "json": {
+          "output": {
+            "ai_comp_score": 65,
+            "location": "Karlsruhe, Baden-Württemberg, Germany",
+            "ai_labels": "适合岗位,有挑战岗位",
+            "title": "Product Manager - Payments (m/f/x)",
+            "industry": "Gambling Facilities and Casinos",
+            "ai_coach": "1. 简历调整策略：突出你在“企业工具/协同/低代码”中涉及的支付接口集成、API管理、复杂流程自动化经验，将这些视为“广义支付平台”能力。2. 弥补差距：针对 iGaming/高风险领域，强调你处理高并发、高实时性、强监管场景下的逻辑严谨性，而不是直接谈支付业务本身。3. 话术准备：在面试中强调你对“流程数字化”和“中后台架构”的深刻理解，这与支付产品经理的需求高度重合。强调你虽不擅长撕逼，但擅长通过文档化和明确的业务逻辑来推动跨职能协作，这正是德国工程导向型公司所需要的“职业化沟通”。4. 心理建设：Tipico 是在该领域非常成熟的玩家，压力主要来自业务的时效性（uptime）而非职场政治，这非常适合你“专注做事”的特质。",
+            "ai_language": "英语工作语言，德语为加分项（办公环境通常为英语）",
+            "url": "https://de.linkedin.com/jobs/view/product-manager-payments-m-f-x-at-tipico-4382109730?refId=GH1g%2B4wokw5R%2F5ZfRuofEQ%3D%3D&trackingId=DIzmP%2FIGAzc4HJibchvG9g%3D%3D&position=24&pageNum=0",
+            "ai_pros": "Tipico 是德国 iGaming 行业的领头羊，该岗位属于典型的“高技术门槛、高薪资、高业务核心度”岗位。支付产品经理在 Fintech 和高频交易领域属于金字塔尖的 PM 职能。虽然该行业与纯 SaaS 不同，但它是在德国获得“核心支付业务经验”的绝佳跳板。一旦你在高风险行业（High-risk/Real-time）证明了处理复杂资金流和合规性的能力，未来跳槽至德国主流 Fintech 或大型电商企业的支付部门将非常轻松。这是典型的以业务复杂度换取职业天花板的岗位。",
+            "ai_requirements": "核心能力拆解：\n1. 支付领域知识：深刻理解 PSP 整合、支付流（Settlement/Reconciliation）、支付网关集成。\n2. 架构与编排：Payment Orchestration（支付编排，即根据规则自动路由交易）的逻辑设计能力。\n3. 风控与合规：必须精通 AML（反洗钱）、KYC（了解你的客户）、PSD2/SCA（欧盟支付指令/强认证）等金融法规。\n4. 后端协作能力：能与架构师、开发人员深入探讨 API 设计、非功能性需求（延迟、可靠性、成功率）。\n5. 敏捷开发与数据驱动：熟练使用 Agile 模式，通过 KPI 驱动（转化率、错误率、响应速度）优化用户支付旅程。",
+            "category": "Full-time",
+            "ai_comp": "优势：你拥有 6 年深厚的 SaaS/低代码/流程数字化背景，在产品全生命周期管理、复杂系统架构协作、项目管理方面具备高迁移性能力。\n差距：核心 Gap 在于“支付领域深度”。JD 明确要求 PSP（支付服务提供商）、APM（替代支付方式）、AML/KYC（反洗钱/KYC）法规理解以及 Payment Orchestration 的实操经验。你对金融合规与支付网关的具体集成细节缺乏直接的商业项目背书。此外，高风险/实时性行业背景也是候选人的“加分项”而非“必须项”，但如果缺乏对金融风险的直观理解，进入此岗位的技术面试会有挑战。",
+            "posted_at": "2026-03-06",
+            "company": "Tipico"
+          }
+        },
+        "pairedItem": {
+          "item": 3
+        }
+      },
+      {
+        "json": {
+          "output": {
+            "ai_comp": "你的简历背景（企业工具、低代码、数字化、项目管理）与JD中的工程类实习（机械、动力、电气）存在严重的领域割裂。你的优势在于对业务流程的理解和协作工具（如SharePoint）的熟练度，这与“AI Intern”岗位中涉及利用数据存储和Co-Pilot协同的部分有交叉。对于其他工程类实习，你缺乏Matlab/Simulink/CAD/嵌入式系统等硬性背景，属于完全的跨专业申请，Gap极大。",
+            "ai_language": "英语（工作语言，虽然未明确标注等级，但作为美国企业实习生要求全英流利沟通）",
+            "location": "Santa Clarita, CA",
+            "industry": "Motor Vehicle Manufacturing",
+            "ai_comp_score": 20,
+            "ai_pros": "Honda R&D（HRC）是传统汽车制造领域，数字化程度相对保守。这些岗位属于传统的硬件研发支持，对你的职业目标（SaaS、高效协同、AI工具化）来说，除非是AI Intern岗位，否则非但不是“金牌跳板”，反而可能由于技术栈过于陈旧（ICE发动机开发）而对你的数字化背景产生负面标记。",
+            "posted_at": "2026-03-07",
+            "ai_coach": "1. 明确职业重心：你拥有6年工作经验，申请此类“Internship”（实习生）岗位在德国或美国职场均会被视为“降维求职”或“跨行重塑”。鉴于你拒绝重度政治沟通且背景为企业数字化，我强烈建议仅关注“AI Intern”岗位。其他岗位（如引擎、电气、机械）属于传统制造业的核心硬工程，与你背景偏差极大，获录可能性极低且不符合你的长期职业规划。 2. 策略调整：对于“AI Intern”，重点强调你利用低代码工具、知识管理系统提升企业效率的经验，将你的“数字化转型”背景包装为“AI赋能业务流的实践者”。 3. 注意事项：此岗位地点在加州（Santa Clarita），而非德国。如果你必须在德国工作，请勿浪费时间在此处；若考虑在美国发展，请针对AI Intern岗位调整简历，突出SharePoint、Co-Pilot等协同工具的应用经验，而非Matlab/CAD等工程技能。",
+            "ai_requirements": "1. 机械/引擎研发实习：需具备引擎测试、Matlab数据分析、CAD绘图能力；2. 电气/嵌入式实习：需掌握Matlab/Simulink、PCB、C/C++、嵌入式代码生成；3. 电动车/电池实习：需懂锂电池原理、BMS算法；4. AI实习：需熟悉机器学习算法、Python/R编程、数据分析、SharePoint及Co-Pilot工具应用。核心需求：大部分岗位为硬核工程方向，仅AI实习侧重数字化协同。",
+            "ai_labels": "不适合的岗位（除AI Intern外），适合岗位（仅限AI Intern方向）",
+            "company": "American Honda Motor Company, Inc.",
+            "title": "HRC Internship",
+            "category": "Internship",
+            "url": "https://www.linkedin.com/jobs/view/hrc-internship-at-american-honda-motor-company-inc-4382338256?refId=ryq3%2FqQ7Q3vSbW844z4jxg%3D%3D&trackingId=8Dbv1jCNTJ%2Fn53c4%2BgArng%3D%3D&position=5&pageNum=0"
+          }
+        },
+        "pairedItem": {
+          "item": 4
+        }
+      },
+      {
+        "json": {
+          "output": {
+            "ai_coach": "首先，请务必注意：这是一个位于美国弗吉尼亚州（Hampton Roads）的岗位，而非德国岗位。作为在德求职的候选人，除非你有搬迁至美国的意向并能处理签证/工签，否则此岗位与你的职业目标严重脱节。其次，这是一个“实习生（Intern）”岗位，硬性要求申请者必须是在读大学生（大二/大三学生），且需要获得美国国防部（DOD）的安全许可（Secret Clearance），这通常要求申请者具备美国公民身份。基于你的背景（6年专业工作经验），申请实习生岗位不仅是大材小用，且在身份要求上几乎百分之百被拒。建议立刻停止关注此类美国国防军工类实习岗位，将精力集中在德国本地的数字化/企业软件类岗位（如SAP, Siemens, Bosch或相关领域的中型Hidden Champions）。",
+            "category": "Part-time (Internship)",
+            "title": "Project Management Intern (IT Intern 3)",
+            "ai_comp": "优势：你拥有 6 年数字化、项目管理和协同工具背景，这与 JD 中提到的“项目管理支持”、“流程协调”和“IT系统集成”高度契合。\nGap：\n1. 身份/教育背景：你是 6 年工作经验的职场人，而该 JD 明确要求是“在读大学生（大三/大四）”，这构成了致命的硬性拒绝条件。\n2. 地域与合规性：岗位要求在美国本土办公，且必须申请美国 DOD 安全许可，这通常只面向美国公民。\n3. 职业层级：该岗位是入门级实习（Intern），你的经验水平远高于此，属于职级倒挂。",
+            "url": "https://www.linkedin.com/jobs/view/project-management-intern-it-intern-3-at-mission-technologies-a-division-of-hii-4381980088",
+            "company": "Mission Technologies, a division of HII",
+            "posted_at": "2026-03-06",
+            "ai_language": "要求流利的英语书面及口头沟通能力。由于是美国国防部相关业务，对英语的严谨性要求极高。无需德语，但考虑到你的求职目标地是德国，此岗位的语言环境对你的德语能力无提升作用。",
+            "ai_labels": "不适合的岗位",
+            "location": "Norfolk, VA, USA",
+            "ai_pros": "该岗位属于美国军工防务领域，业务涉及前沿的 LVC（实时、虚拟、构建）技术与企业数字化，具有很强的技术沉淀感。但在德国求职市场，此类岗位的“跳板价值”极低，且因为严重的身份与法律门槛，完全不适合你目前的情况。建议寻找德国同类军工或大型工程企业的数字化部门（如 Rheinmetall, Thales Germany），那里的业务领域相关，且更符合你的职业背景。",
+            "ai_requirements": "核心要求：\n1. 学历要求：必须是在读大学生（大三/大四阶段，已完成 40%-60% 学分）。\n2. 合规性：必须具备申请美国国防部（DOD）机密级安全许可的资格（通常需美国公民）。\n3. 职能要求：支持 IT 与软件工程项目的进度监控、跨部门协调、资源调配、项目报告撰写及 Lessons Learned 整理。\n4. 工具技能：熟练使用 Microsoft Excel。",
+            "industry": "Defense and Space Manufacturing",
+            "ai_comp_score": 0
+          }
+        },
+        "pairedItem": {
+          "item": 5
+        }
+      },
+      {
+        "json": {
+          "output": {
+            "posted_at": "2026-03-05",
+            "industry": "Defense and Space Manufacturing (国防与航天制造)",
+            "title": "Co-Op (Fall Term)",
+            "ai_comp_score": 10,
+            "ai_labels": "不适合的岗位",
+            "company": "Curtiss-Wright Corporation",
+            "ai_comp": "硬性要求：1. 身份要求：必须符合ITAR（国际武器贸易条例）要求，即美国身份，此为硬性否决项。2. 学历要求：需要是当地大学在读学生（Intern/Co-op性质）。3. 专业领域：要求机械、电气、工业工程等硬核工程背景，或供应链/会计。简历匹配度：您的6年软件与企业数字化背景虽在IT/流程优化方向有重合，但缺乏该行业所需的专业领域知识（如核能、国防、制造流程控制）。差距极大。",
+            "ai_requirements": "岗位核心要求拆解：1. 学生身份：仅限实习生或Co-op（通常为在读大学生）；2. 合规与背调：必须满足美国出口管制要求，需通过严格的安全审查；3. 职能分布：涵盖机械/电气工程、工业工程（流程改进、Lean、Kaizen）、项目控制、供应链与会计等职能；4. 背景需求：偏好工程类或商务/IT背景，侧重于制造业实操辅助。",
+            "location": "Pittsburgh, PA, USA",
+            "ai_coach": "鉴于您在德国的求职背景，这个职位极其不推荐投递。理由如下：1. 地理位置错配：该岗位位于美国宾夕法尼亚州（Pittsburgh, PA），而非德国，无法满足您在德国发展的需求。2. 身份与背景门槛：JD明确提及“需接触出口管制信息（export-controlled information）”，这意味着该岗位极大概率仅限美国公民或绿卡持有者申请，中国背景候选人几乎不可能通过背景审查。3. 职业匹配度：您拥有6年资深经验，而这是Intern/Co-op岗位，不仅薪资极低，且工作内容多为基础行政、流程维护或制造辅助，与您追求的数字化产品/方案专家定位完全不符。建议您将精力集中在德国本土的工业软件（Industrial Software）、数字化转型咨询公司或大型制造业（如Siemens, Bosch, SAP）的数字化转型部门。",
+            "category": "Internship / Co-op",
+            "ai_language": "英语流利（因涉及国防工业与美国法律合规，要求极高），未提及德语需求。",
+            "url": "https://www.linkedin.com/jobs/view/co-op-fall-term-at-curtiss-wright-corporation-4223518313?refId=ryq3%2FqQ7Q3vSbW844z4jxg%3D%3D&trackingId=q1DXs%2BiDlmCr3QS4jKpmiw%3D%3D&position=23&pageNum=0",
+            "ai_pros": "该岗位属于美国国防与核能制造业，处于极度封闭和受监管的垂直领域。虽然是知名制造企业，但其业务模式极度传统，数字化程度偏向于工业制造流程管理（Lean/Kaizen），非前沿AI应用。对于中国背景女性候选人，这不仅不是跳板，反而因合规限制和地理位置差异，属于“避雷”岗位。"
+          }
+        },
+        "pairedItem": {
+          "item": 6
+        }
+      },
+      {
+        "json": {
+          "output": {
+            "ai_language": "该岗位为美国公司，要求流利的英语沟通能力。JD未提及德语需求，因为其核心工作地点在北美。",
+            "industry": "Advertising Services",
+            "ai_comp": "**优势**：你的专业背景（软件、企业工具、产品、项目管理）与JD中的“Product Management Intern”和“Software Engineering/PMO Intern”方向有很高的知识重合度，具备执行这些职能所需的核心技能（文档、协同、流程管理）。\\n**Gap**：1. **学历要求**：JD明确要求在读本科生，你作为毕业多年的职业人士，不符合该实习项目的硬性准入门槛。2. **地域/工作许可**：该岗位要求在美国特定办公室工作，与你的德国求职目标完全冲突。3. **职级错位**：实习岗位的薪资和职责水平与你6年的核心经验严重不匹配。",
+            "company": "Stirista",
+            "title": "Stirista Intern",
+            "category": "Internship (Part-time)",
+            "ai_requirements": "该岗位核心要求包括：1. 学历身份：必须是目前在读的大学大三或大四学生；2. 时间投入：每周至少保证24小时工作，期限为5月19日至8月7日；3. 办公地点：必须居住在San Antonio, TX, NY, Boston, MA或Pompano Beach, FL的30英里范围内；4. 软技能：出色的沟通能力、主动性、结果导向及多任务处理能力；5. 工具使用：熟练使用PC及Google办公套件。岗位职能涵盖市场、客户服务、产品管理、数据运营等多个部门。",
+            "url": "https://www.linkedin.com/jobs/view/stirista-intern-at-stirista-4378874904",
+            "location": "Pompano Beach, FL, USA",
+            "ai_labels": "不适合岗位",
+            "ai_coach": "**强烈建议忽略此岗位**。原因如下：1. **身份错配**：该JD明确要求申请人为“当前在读的大学大三或大四学生”，作为已有6年工作经验的职场人士，申请实习生岗位不仅无法通过简历筛选（HR会因为过度资历自动过滤），且即使录用也不符合德国/欧洲市场对职业路径的预期。2. **地域错配**：该岗位的硬性要求是必须在该公司美国办公室所在地（如纽约、波士顿等）30英里内工作，无法提供在德国的就业机会。3. **职业降级**：你的背景是软件/数字化/产品方向的资深从业者，即使在德国求职遇到困难，也应优先瞄准“Junior/Associate Product Manager”或“Solution Consultant”等岗位，而非重新从实习做起。建议你将目光转向德国本地的B2B SaaS公司（如Personio, Celonis等）或跨国数字化转型咨询公司，直接申请正式职员岗位。",
+            "ai_comp_score": 10,
+            "posted_at": "2026-03-05",
+            "ai_pros": "该岗位为美国初创类数据服务公司的实习项目。虽然其“Product Management”方向涉及AI驱动开发，具备一定的行业前沿性，但对于你而言，**完全不具备“跳板”价值**。它既不能解决你在德国的工作签证问题，也不能为你积累在德国市场所需的职场背书。建议寻找德国本地具有类似数字化工具或B2B SaaS业务的公司，以获取正式职员身份为首要目标。"
+          }
+        },
+        "pairedItem": {
+          "item": 7
+        }
+      },
+      {
+        "json": {
+          "output": {
+            "title": "Platform Campaign Project Intern (TikTok- Operations) - 2026 Start (BS/MS)",
+            "ai_comp": "优势：你拥有 6 年的行业实战经验，在企业数字化、工具产品、流程优化方面的深度远超一般实习生。你的背景能轻松覆盖“优化产品体验”、“分析业务流程缺口”等核心要求。Gap：1. 身份门槛：该 JD 明确标注为 Campus Intern（实习生），主要针对在读本科/硕士，而你已经是拥有 6 年经验的职场人，这在 HR 筛选系统（ATS）中存在巨大冲突；2. 地理位置：岗位在西雅图，如果你在德国求职，这完全偏离了你的地域目标；3. 文化契合：TikTok 的节奏非常快，对沟通与跨部门协作要求极高，与你“拒绝重度协调”的诉求存在明显矛盾。",
+            "ai_coach": "首先，此岗位对于你 31 岁、拥有 6 年职场经验的资深背景来说是一个“降维打击”的 Internship，且地点在西雅图（美国）。从职业发展路径看，这可能不符合你留在德国的目标，除非你的目标是获得一份大厂背书以跳板回欧洲的某个大厂（如 TikTok 欧洲分部）。如果你一心要在德国找工作，请慎重评估时间成本。如果决定投递，简历重点应聚焦在你的“企业数字化/协同工具经验”如何直接解决运营中的复杂问题，而非强调 Intern 身份。务必突出你能够独立驱动流程优化，而不是等着被分配任务。鉴于你不喜欢重度社交/政治的偏好，TikTok 这样高压、快节奏、内部协作频繁的互联网大厂环境需要你做好极高的心理建设。",
+            "ai_comp_score": 45,
+            "posted_at": "2026-03-10",
+            "category": "Internship",
+            "industry": "Entertainment/E-commerce",
+            "ai_labels": "不适合的岗位,适合岗位 (技能维度)",
+            "url": "https://www.linkedin.com/jobs/view/platform-campaign-project-intern-tiktok-operations-2026-start-bs-ms-at-tiktok-4330473741",
+            "company": "TikTok",
+            "location": "Seattle, WA (USA)",
+            "ai_language": "英语：流利/母语水平（跨时区沟通需求）；德语：此处岗位无要求，但在德国相关职场环境下，德语依然是加分项。",
+            "ai_requirements": "1. 流程优化：充当运营与产品之间的桥梁，识别工作流痛点；2. 数据驱动：通过数据分析发现业务问题，诊断产品缺陷；3. 产品协作：与产品经理配合，细化需求，优化用户路径；4. 项目执行：在跨区域、跨时区背景下推动项目落地，确保版本迭代顺畅。核心素质：逻辑分析、独立推动力、跨部门沟通。",
+            "ai_pros": "TikTok Shop 属于典型的“高增长、快迭代”电商业务，是目前行业的前沿战场。从职业发展看，该岗位的“钱景”在于大厂背书，适合作为简历上的“光环”项目，但作为实习岗，对你的职业生涯提升有限。这更像是一个为了“进入大厂系统”的跳板，而非你长期追求的“产品/数字化解决方案”职业核心路径。如果你希望在欧洲深耕，TikTok 在德国的电商运营岗（而非美国 intern）才具有真正的战略价值。"
+          }
+        },
+        "pairedItem": {
+          "item": 8
+        }
+      },
+      {
+        "json": {
+          "output": {
+            "location": "Norfolk, VA, USA",
+            "posted_at": "2026-03-08",
+            "ai_labels": "不适合的岗位",
+            "ai_pros": "该岗位属于美国军工防务领域，涉及 C5ISR、AI/大数据在军事场景的落地。虽然业务具有高度的前沿性和战略价值，但由于其封闭的国防属性和地理限制，对于在德寻求职业发展的你而言，不具备任何跳板价值或商业钱景，属于完全无效的投递目标。",
+            "category": "Internship (Temporary)",
+            "url": "https://www.linkedin.com/jobs/view/project-management-intern-it-intern-3-at-hii-4381399776?refId=ryq3%2FqQ7Q3vSbW844z4jxg%3D%3D&trackingId=NjYYF5RQOIJWvQXhPpLgrQ%3D%3D&position=18&pageNum=0",
+            "ai_comp_score": 0,
+            "ai_requirements": "1. 学历要求：必须为在校生，大二或大三阶段，GPA 3.0以上；\n2. 安全许可：具备获取美国国防部（DOD）机密许可的资格（通常要求美国国籍）；\n3. 核心职能：协助处理IT及软件工程项目的进度监控、资源协调、会议组织及状态报告撰写；\n4. 能力要求：行政类基础协作、基础项目进度管理、Excel 数据整理、跨团队协调。",
+            "ai_coach": "直接放弃。该岗位不仅在地理位置上与德国市场无关，且其性质完全不符合你的职业背景和诉求。首先，这是一个面向美国在读大学生的暑期实习（Internship），要求具备美国国防安全许可（DOD Security Clearance），这是非美籍或未在美居住的候选人无法获取的。其次，你的背景是6年行业经验的专家，去应聘一个需要从大学期间兼顾学业的实习岗，属于严重的“降维/错位投递”。建议将精力集中在德国当地的数字化转型咨询公司、工业互联网（IIoT）企业或中大型制造企业的数字化部门，寻找 Product Manager 或 Solution Architect 相关岗位。",
+            "title": "Project Management Intern (IT Intern 3)",
+            "ai_comp": "1. 学历要求Gap：JD要求申请人必须是“在读大学生（大二/大三）”，且需满足特定学分比例和GPA，这与你已有6年工作经验的资深背景严重冲突；\n2. 法律与地域Gap：JD明确要求 Ability to Obtain DOD Secret Clearance（美国国防部机密安全许可），这通常仅向美国公民开放，对于在德求职的中国背景候选人而言是不可能的硬性门槛；\n3. 岗位定位Gap：虽然你具备项目管理背景，但该岗位是基础行政+初级辅助性质（Intern），无法发挥你6年在企业数字化工具方面的专业积累；\n4. 地理位置Gap：岗位地点在美国弗吉尼亚州（Norfolk, VA），而非德国。",
+            "industry": "国防与军事工业（Defense & Aerospace）",
+            "ai_language": "英语：要求具备优秀的写作、沟通和倾听能力；未提及德语要求（因其为美国本土防御岗位）。",
+            "company": "HII (Huntington Ingalls Industries)"
+          }
+        },
+        "pairedItem": {
+          "item": 9
+        }
+      }
+    ],
+    "save into database": [
+      {
+        "json": {
+          "id": 3,
+          "created_at": "2026-03-11T19:30:36.176947+00:00",
+          "title": "Visiting Associate IT Consulting (all genders) - BCG Platinion",
+          "company": "BCG Platinion",
+          "location": "Stuttgart, Baden-Württemberg, Germany",
+          "industry": "Business Consulting and Services",
+          "desc": "As Visiting Associate (all genders) at BCG Platinion you'll support our consulting team within up to three months. You'll actively support the development of IT strategies, concepts and solutions at the customer site as well as at one of our office locations. Thereby, you will actively take part in the BCG Platinion working life and continuously expand your capabilities.Shape the world of tomorrow You'll provide support for the technical analysis and the review of IT architectures or the IT product evaluation for different industries and technical environments You'll independently prepare IT-related project content such as the analysis and optimization of IT processes and IT value chains You'll be responsible for the preparation and follow-up of meetings and presentations and all project related analysis and dataThis Is How You Make a Difference You are at an successful and advanced stage of your master’s studies in computer science, business informatics or a related discipline You own very good IT skills and have already gained first practical experience via internships or as working student (SW-development, IT project management, IT services processes) You have excellent analytical and conceptual abilities and are a professional in using MS-Office programs (Word, PowerPoint, Excel and Outlook) You feel comfortable in interdisciplinary teams and global contexts You work extremely customer- and results-oriented You are good at understanding and communicating complex topics in both, German and EnglishHow You Can Grow With UsAt our company, strict hierarchies are a thing of the past – we believe in diversity and an open-minded culture of feedback across all levels. Our working environment reflects this. Inclusive teamwork is of utmost importance to us, in addition to content that lets you grow your abilities every day. Constant learning, appreciation for individual contributions, and trust from day one are our highest priorities, especially in the current situation. Therefore, we provide not only modern and centrally located offices, but also cutting-edge IT equipment for remote work and regular virtual events held by our vibrant and welcoming network. Furthermore, there is the opportunity for a permanent position after your internship.Become a part of our teamBCG Platinion is an Equal Opportunity Employer and actively promotes diversity and inclusion. We consider all qualified applicants regardless of ethnic and social background, age, gender, sexual identity, religion, ideology or disability.Apply over our online portal now, with your CV, all relevant references and transcripts, a cover letter including your salary expectations and earliest possible entry date. If you have any questions, please contact Leonie Kutschera-Groß at +49 221 58958-555.Further information at www.bcgplatinion.com/careers?local=de#BCGPlatinion",
+          "salary": "",
+          "posted_at": "2026-03-06",
+          "AI_requirements": "核心岗位要求翻译：\n1. 协助顾问团队进行IT战略、架构设计及方案落地。\n2. 负责IT架构分析、评估及IT价值链优化。\n3. 准备项目相关分析、数据处理及汇报演示（涉及大量的文档工作）。\n能力拆解：\n- 学术背景：CS或信息管理类硕士在读（硬性）。\n- 技术功底：扎实的软件开发或IT项目管理实习经历。\n- 软技能：极强的分析与归纳能力，精通MS Office办公套件（作为咨询工具），能够在全球化、跨职能团队中协作。\n- 沟通：能够将复杂IT课题转化为清晰的商业语言（德/英）。",
+          "AI_language": "德英双语流利（必须具备复杂专业话题的沟通能力）",
+          "AI_match_score": "65",
+          "url": "https://de.linkedin.com/jobs/view/visiting-associate-it-consulting-all-genders-bcg-platinion-at-bcg-platinion-4238478993?refId=mhoa1BgU8nOOj5iv5zSKkA%3D%3D&trackingId=mNtpIce7p6Anj40AtIKQHQ%3D%3D&position=25&pageNum=0",
+          "category": "Internship (Visiting Associate)",
+          "AI_coach": "1. 简历重塑：此岗位明确要求处于Master在读阶段，这是最大的合规卡点。建议您在简历显眼位置标注当前的学业状态（若尚未注册Master，此岗位申请大概率会被系统自动筛除）。若已在读，需强调这6年中国工作经验带来的“行业洞察力”和“复杂项目解决能力”，这使你远超一般学生候选人。\n2. 动机转化：由于你拒绝重度政治（Politics），咨询业的高强度沟通环境对你来说是巨大挑战。在投递时，不要仅强调你的技术能力，而要强调你作为“执行者”和“分析师”的角色，即你擅长在结构化框架下交付IT解决方案，而非作为社交润滑剂。\n3. 策略定位：将此实习视为进入德国头部咨询圈的“跳板”，而非终点。利用3个月时间通过Platinion的背书和项目积累德国本土IT架构与企业流程的Know-how，建立Network，实习期满后直接平跳到德国本土的头部工业巨头（如博世、梅赛德斯-奔驰，特别是其Stuttgart基地）从事内部数字化转型或产品管理岗位，那才是你的“长久舒适区”。",
+          "AI_competiveness": "1. 优势：你拥有6年的软件、企业工具及数字化领域实战经验，这使得在“IT架构分析、IT价值链优化”等JD核心任务上，你具备远高于普通学生的能力和深度。\n2. Gap：\n   - 学历门槛：JD明确要求“处于Master在读阶段”。如果你目前不是在读状态，申请此岗即存在硬性条件不符。\n   - 工作性质冲突：咨询工作（尤其是BCG这类顶尖公司）本质上是高度依赖沟通、汇报、Client管理的工作，这与你“拒绝重度沟通和Politics”的职业目标存在直接冲突。\n   - 职级错配：你有6年资深经验，申请Visiting Associate（通常面向学生）存在职业路径下沉的风险，虽可作为跳板，但并非职业阶梯上的最优进阶。",
+          "ai_labels": "适合岗位（作为跳板）,目标岗位（职能方向匹配）"
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      },
+      {
+        "json": {
+          "id": 4,
+          "created_at": "2026-03-11T19:30:36.176947+00:00",
+          "title": "Product Designer (Product Design Lead)",
+          "company": "Niulix",
+          "location": "Berlin, Berlin, Germany",
+          "industry": "Human Resources Services",
+          "desc": "Join a growing startup as Product Design Lead, owning product design and UX, crafting intuitive flows and interfaces, and collaborating with founders and engineers in Berlin (on-site)Requirements3+ years of experience in product and UX designProven ability to craft UIs, flows, and prototypesAutonomous and able to own a complex product from concept to launchBased in Berlin or willing to relocateHaving a work permit in Germany BenefitsOwnership from day 1Grow with the companyShared upside with top-of-market salary and generous equityWork on a mission that matters",
+          "salary": "",
+          "posted_at": "2026-03-09",
+          "AI_requirements": "核心要求：1. 3年以上产品与UX设计经验；2. 具备 crafting UI, flows, prototypes 的实操能力；3. 极强的独立工作能力 (Autonomous)，能够从概念到发布全权把控产品；4. 必须身处柏林或愿意搬迁，并持有德国有效工签。分析：该岗位要求一名具备“全栈”心态的设计师，不仅要画图，还要具备产品思维，能直接与创始人及工程师沟通，是典型的小团队核心角色。",
+          "AI_language": "德英双语无障碍（要求具备在德国当地进行高频协作的设计沟通能力）",
+          "AI_match_score": "85",
+          "url": "https://de.linkedin.com/jobs/view/product-designer-at-niulix-4381821758?refId=GH1g%2B4wokw5R%2F5ZfRuofEQ%3D%3D&trackingId=dOa7FVYdXOx%2BqOvSHHlOpA%3D%3D&position=25&pageNum=0",
+          "category": "Full-time",
+          "AI_coach": "1. 针对“拒绝政治/重沟通”的顾虑，在投递时强调你对“Product-led Growth”和“以数据驱动设计”的认同，这在德国Startup中是最高效的沟通语言，能帮你避开无效社交。 2. 突出你的6年企业数字化背景（尤其是低代码/工具类产品经验），将其定义为“能直接从需求转化为复杂工程逻辑的设计能力”，这对早期创业公司极具吸引力。 3. 在面试中利用你的双语优势，体现你对德国B2B用户心理的理解，这比纯设计技能更难得。 4. 重点提及你对Ownership的理解，德国Startup非常看重独立工作能力（Self-starter），这与你的背景完全契合。",
+          "AI_competiveness": "【优势】: 6年工作经验远超3年要求，背景中的企业工具、低代码及项目管理经验能直接复用至B2B HR产品设计中，对B2B产品的复杂性有天然理解力。\n【Gap】: 简历未提及具体的UI/原型工具（如Figma）熟练程度；“Lead” Title 要求极强的独当一面能力，需在面试中证明你曾独立负责过端到端产品生命周期。",
+          "ai_labels": "目标岗位,适合岗位"
+        },
+        "pairedItem": {
+          "item": 1
+        }
+      },
+      {
+        "json": {
+          "id": 5,
+          "created_at": "2026-03-11T19:30:36.176947+00:00",
+          "title": "Systems Test Engineering Co-Op",
+          "company": "Rheem Manufacturing",
+          "location": "Fort Smith, AR / Lewisville, TX (USA)",
+          "industry": "Manufacturing (HVAC)",
+          "desc": "Job DescriptionThe Systems Test Engineering Co-Op will help test and validate systems with specific attention to the electronic controls on an on-going basis. This position will be writing automated test scripts, configuring test systems, writing test reports, and working with hardware controls. You will work under and be given direction from systems engineers on a daily basis. You will work under and be given direction from systems engineers daily.This position will serve our Enterprise Division, located in Fort Smith, AR or Lewisville, TX (Onsite). This is a rotating co-op position beginning in August 2026.ResponsibilitiesAssemble experimental circuitry and complete prototype models according to engineering schematics, instructions, technical manuals, and knowledge of electronic systems and components. Assemble and verify various HVAC systems as well as test fixtures which include various AC voltage levels (24/120/220VAC) as well as DC voltage levels (12/5/3.3VDC)Set up standard test apparatus or design test equipment and circuitry to conduct functional, operational, environmental, and life tests to evaluate performance and reliability of prototype or production models. Upgrade software and run software tests on existing electronic systems. To include maintaining detailed records of validity tests and upgrades performed. Maintain a safety conscious environment for all personnel working in lab. Other duties as assignedQualificationsFull time student working towards a Computer Science or Engineering Degree Understand basic voltage and current circuits, diagrams, schematics and instructions in order to complete installation or troubleshooting of electronics systems, parts or wiring networks. Ability to read, understand and implement technical procedures, and government regulations and to record technical informationBasic working knowledge of electronic controls test and instrumentation equipment such as oscilloscopes, function generators, and environmental test chambersGood command of Python or other programming languagesProficiency in Microsoft Word, and Excel About UsAt Rheem, we engineer products for life. For home life. For work life. For the life of the planet we all share. Backed by over 100 years of expertise, we’re passionate about product innovation and boldly committed to sustainability. Our full line of global air and water solutions deliver reliable performance, comfort and energy savings for residential and commercial applications worldwide. From engineers to accountants, sales professionals to support experts, Rheem depends on people to power our innovations. Join Rheem and help shape the future of products that impact lives—every day.Our Behavior Based Values Set Us ApartListening to Understand – Open mind, learning from others, accepting feedback, embracing the objectiveContributing Respectfully - Sharing opinions, valuing ideas, sharing opposing perspectives with respectThinking Creatively – Applying creativity, seeking improvements, understanding from the customers’ lensActing with Responsibility – Owning decisions and actions, acting with integrity, embracing accountabilityRheem is an Equal Opportunity Employer. Rheem encourages all qualified candidates to apply, including those of any race, color, religion, gender, gender identity or expression, sexual orientation, national origin, genetics, disability, age, or veteran status. The job description above has been designed to indicate the general nature and level of work performed by employees within this classification. It is not designed to contain or be interpreted as a comprehensive inventory of all duties, responsibilities and qualifications required of employees assigned to this job. Equivalent combination of education, experience, and skills may supplement above minimum job requirements.For U.S. Based jobs, please note that Rheem is unable to hire candidates to be employed in the following states: Alaska, District of Columbia, Hawaii, Idaho, Mississippi, Montana, New Mexico, North Dakota, or Vermont.Rheem and its subsidiaries do not accept unsolicited resumes from recruiters or employment agencies. In the absence of an executed Recruitment Services Agreement, there will be no obligation to any referral compensation or recruiter fee.",
+          "salary": "",
+          "posted_at": "2026-03-06",
+          "AI_requirements": "核心要求拆解：1. 硬件测试：组装实验电路，验证HVAC原型机，使用示波器等仪器；2. 软件测试：编写自动化脚本（Python），维护系统软件；3. 执行力：在资深工程师指导下完成测试报告和系统配置；4. 身份门槛：必须是计算机或工程类的在读全日制学生。",
+          "AI_language": "英语要求：专业工作语言水平；无德语要求（美国岗位）。",
+          "AI_match_score": "10",
+          "url": "https://www.linkedin.com/jobs/view/systems-test-engineering-co-op-at-rheem-manufacturing-4365337480?refId=ryq3%2FqQ7Q3vSbW844z4jxg%3D%3D&trackingId=csh2w42%2FJYIEOpHNybOkkQ%3D%3D&position=25&pageNum=0",
+          "category": "Internship/Co-Op",
+          "AI_coach": "该岗位完全不适合你，请立即停止申请。理由有三：1. 这是一个“Co-Op”实习岗，通常只面向在读的本科或研究生学生，你已有6年工作经验，属于“过度资深”，HR系统会自动过滤；2. 岗位核心是硬件/嵌入式系统测试（需要操作示波器、电路板、物理接线），这与你的软件产品/数字化背景完全不对口；3. 工作地点在美国（阿肯色州或德州），这违反了你“在德求职”的核心诉求。建议将精力转向德国工业4.0、数字化转型或B2B SaaS类公司的产品经理或解决方案专家岗位，利用你6年的数字化产品经验。",
+          "AI_competiveness": "优势：仅有Python编程基础这一项重叠。Gap：1. 学历要求：JD明确要求在读学生，你已毕业多年；2. 核心技能：JD要求硬件电路、电压测量、示波器使用及物理组装，你具备的是软件/企业工具/数字化背景，技能树完全错位；3. 职责定位：该岗位为执行导向（组装电路、做实验），而你的背景偏向逻辑层面的产品与流程管理。匹配度极低。",
+          "ai_labels": "不适合的岗位"
+        },
+        "pairedItem": {
+          "item": 2
+        }
+      },
+      {
+        "json": {
+          "id": 6,
+          "created_at": "2026-03-11T19:30:36.176947+00:00",
+          "title": "Product Manager - Payments (m/f/x)",
+          "company": "Tipico",
+          "location": "Karlsruhe, Baden-Württemberg, Germany",
+          "industry": "Gambling Facilities and Casinos",
+          "desc": "We are Tipico, Germany's leading sports betting provider and one of the most dynamic tech companies in the industry. We approach every challenge like a Championship match, with a mission to excite the arena and elevate the betting experience for every customer. Our culture is energetic and ambitious—we play as a team to win high, leave an impact, and commit to excellence. Fueled by our passion for the perfect product, we use the newest tech stack to get better every single day.At Tipico, we believe in owning our game. Are you ready to step onto the pitch, bring your best self, and become a champion? Then show us your game face – because we’re looking for a Product Manager - Payments (m/f/x) to join the team!Job DescriptionAt Tipico, we power seamless, secure, and high‑performance payment experiences for millions of sports betting and iGaming customers. As our new Product Manager - Payments (m/f/x), part of our Payment Technologies team, you will help shape the core systems that enable deposits, withdrawals, payment routing, and regulatory compliance across markets. Your playing field: Own the full lifecycle of payment products and features—from discovery to release and performance optimisationDefine Epics and User Stories, guiding development teams in a fast‑paced Agile environmentDrive strategic development of Tipico’s payment platform, including: Integration of new payment methods and PSPs Payment orchestration capabilities (routing, retries, failover, smart provider selection) Standardised, scalable payment APIs and backend services Own the customer payment journeys with the team, monitor and improve the key KPIs and conversion ratesCollaborate with architecture, engineering, business, and compliance teams to ensure accurate requirements, prioritisation, and regulatory alignmentPartner closely with other Product Managers to coordinate payment roadmap delivery across the organisationSpecify and monitor non‑functional requirements such as reliability, latency, fraud‑related KPIs, and transaction‑success performanceConduct UAT and sign off, ensuring quality, compliance, and operational readinessQualificationsWhich skills should you bring to the pitch:Payments Expertise. Solid experience in payments product management, ideally including PSPs, APMs, banking rails, settlement flows, and reconciliation fundamentalsPayment Orchestration. Hands-on experience or strong familiarity with payment orchestration platforms (routing logic, cascading, retries)Gateway Integrations. Experience working with payment gateway integrationsRisk &amp; Monitoring. Understanding of transaction monitoring systems and risk control mechanismsRegulatory Compliance. Familiarity with regulatory frameworks such as KYC/KYD, AML, PSD2, SCA, safeguarding, and market-specific rulesFinancial Processes. Strong understanding of financial processes and payment compliance topicsTechnical Collaboration. Ability to drive technical discussions with architects, developers, and risk/compliance stakeholdersAgile Delivery. Experience working in an Agile development environment with complex backend systemsCustomer Centricity. Customer-centric mindset and ability to translate user behaviour into payment product decisionsStakeholder Management. Basic project and stakeholder management skills, including planning, business cases, and issue trackingHigh-Risk Environments (Preferred). Background in iGaming or sports betting, or other high-scale, high-risk, real-time transaction environmentsAdditional InformationThis is how we score with you:Established International Group. We have a solid foundation on which to grow.Personal and Professional Growth. We offer you opportunities to develop and grow to unlock your potential. Relocation Support. To make your move to Karlsruhe as smooth as possible. Business Bike Leasing. We offer a sustainable commuting solution whilst also keeping you active! Corporate Pension Scheme (betriebliche Altersvorsorge). Secure your future! Join our corporate pension scheme, where we provide additional financial support. eGym. We encourage an active lifestyle, and to support this, we’ve partnered with an online sports platform that provides access to a variety of clubs and offers across Germany. Modern offices. Our very own Karlsruhe campus provides an open-plan space with the latest technology. Events. Sponsored Charity and Team gatherings; we like to have fun together as one team and reinforce our connections. Supportive Environment. We believe in collaboration and working together as a team, but we also give importance to the uniqueness of each and every one of us. Think a career at Tipico’s right for you?Apply now and join our winning team! If you have any questions or comments about this role, our TA team is happy to help you! Feel free to reach out to us on our social media channelsWe look forward to your application!",
+          "salary": "",
+          "posted_at": "2026-03-06",
+          "AI_requirements": "核心能力拆解：\n1. 支付领域知识：深刻理解 PSP 整合、支付流（Settlement/Reconciliation）、支付网关集成。\n2. 架构与编排：Payment Orchestration（支付编排，即根据规则自动路由交易）的逻辑设计能力。\n3. 风控与合规：必须精通 AML（反洗钱）、KYC（了解你的客户）、PSD2/SCA（欧盟支付指令/强认证）等金融法规。\n4. 后端协作能力：能与架构师、开发人员深入探讨 API 设计、非功能性需求（延迟、可靠性、成功率）。\n5. 敏捷开发与数据驱动：熟练使用 Agile 模式，通过 KPI 驱动（转化率、错误率、响应速度）优化用户支付旅程。",
+          "AI_language": "英语工作语言，德语为加分项（办公环境通常为英语）",
+          "AI_match_score": "65",
+          "url": "https://de.linkedin.com/jobs/view/product-manager-payments-m-f-x-at-tipico-4382109730?refId=GH1g%2B4wokw5R%2F5ZfRuofEQ%3D%3D&trackingId=DIzmP%2FIGAzc4HJibchvG9g%3D%3D&position=24&pageNum=0",
+          "category": "Full-time",
+          "AI_coach": "1. 简历调整策略：突出你在“企业工具/协同/低代码”中涉及的支付接口集成、API管理、复杂流程自动化经验，将这些视为“广义支付平台”能力。2. 弥补差距：针对 iGaming/高风险领域，强调你处理高并发、高实时性、强监管场景下的逻辑严谨性，而不是直接谈支付业务本身。3. 话术准备：在面试中强调你对“流程数字化”和“中后台架构”的深刻理解，这与支付产品经理的需求高度重合。强调你虽不擅长撕逼，但擅长通过文档化和明确的业务逻辑来推动跨职能协作，这正是德国工程导向型公司所需要的“职业化沟通”。4. 心理建设：Tipico 是在该领域非常成熟的玩家，压力主要来自业务的时效性（uptime）而非职场政治，这非常适合你“专注做事”的特质。",
+          "AI_competiveness": "优势：你拥有 6 年深厚的 SaaS/低代码/流程数字化背景，在产品全生命周期管理、复杂系统架构协作、项目管理方面具备高迁移性能力。\n差距：核心 Gap 在于“支付领域深度”。JD 明确要求 PSP（支付服务提供商）、APM（替代支付方式）、AML/KYC（反洗钱/KYC）法规理解以及 Payment Orchestration 的实操经验。你对金融合规与支付网关的具体集成细节缺乏直接的商业项目背书。此外，高风险/实时性行业背景也是候选人的“加分项”而非“必须项”，但如果缺乏对金融风险的直观理解，进入此岗位的技术面试会有挑战。",
+          "ai_labels": "适合岗位,有挑战岗位"
+        },
+        "pairedItem": {
+          "item": 3
+        }
+      },
+      {
+        "json": {
+          "id": 7,
+          "created_at": "2026-03-11T19:30:36.176947+00:00",
+          "title": "HRC Internship",
+          "company": "American Honda Motor Company, Inc.",
+          "location": "Santa Clarita, CA",
+          "industry": "Motor Vehicle Manufacturing",
+          "desc": "Job PurposeDevelopment Engineer InternWill assist with engine development and durability testing on the test cell and report writing. Prepare and review test plan and if cell is ready as planned. Will learn how to prepare test cell/plans, instrumentation calibration setting and cell maintenance. Some data analysis and Matlab experience preferred.Design Engineer InternWill create Design Manuals, along with providing support with Part Design, Drawings, and Assembly Manuals and other design-related tasks. Students will understand fundamental design industry practices and gain experience learning and using CAD (Catia) as well understand the unique design considerations and standards related to specific engine subsystems.Electrical Engineer InternWill assist in drafting electrical schematics and layouts for upcoming projects, assist with PCB testing and documentation process. Knowledgeable with Matlab/Simulink/Stateflow and some programming language (C/C++) used to produce code. Must have some knowledge and classroom experience with basic controls and logic design; model-based embedded-software implementation and code generation.Battery and E-machine/EV InternWill be responsible for testing, controlling, validating powertrain E-machine and integrating E-machine within Powertrain (hybrid or Battery electric Vehicle). Must have basic understanding of lithium-ion battery behavior and properties, circuit models, BMS algorithms and state-space modelsAI Intern: Will assist in utilizing AI, data storage, SharePoint and Co Pilot. Understanding of Machine learning algorithms, programming (Python/R), analytics.Quality Assurance Engineer InternAssisted with routine quality inspections and data collection to support ongoing process improvement, recording inspection results, labeling materials, and maintaining organized documentation. Supported daily production activities by preparing materials, monitoring equipment status, and reporting issues to supervisors. Helped maintain accurate documentation, including test records, audit findings, and quality reports. Validate raw stock to vendor certs and part drawings. Use hand measurement tooling to do basic validation of product.Performance Applications Engineer InternWill assist in the development and validation of embedded powertrain control strategies for internal combustion engines and hybrid powertrain systems. The intern will work closely with controls and calibration engineers on model-based development, physical system modeling, and calibration tool creation, using industry standard tools such as Matlab/Simulink and Python.Key AccountabilitiesQualifications, Experience, and SkillsJob DimensionsDecisions ExpectedWorking Conditions",
+          "salary": "",
+          "posted_at": "2026-03-07",
+          "AI_requirements": "1. 机械/引擎研发实习：需具备引擎测试、Matlab数据分析、CAD绘图能力；2. 电气/嵌入式实习：需掌握Matlab/Simulink、PCB、C/C++、嵌入式代码生成；3. 电动车/电池实习：需懂锂电池原理、BMS算法；4. AI实习：需熟悉机器学习算法、Python/R编程、数据分析、SharePoint及Co-Pilot工具应用。核心需求：大部分岗位为硬核工程方向，仅AI实习侧重数字化协同。",
+          "AI_language": "英语（工作语言，虽然未明确标注等级，但作为美国企业实习生要求全英流利沟通）",
+          "AI_match_score": "20",
+          "url": "https://www.linkedin.com/jobs/view/hrc-internship-at-american-honda-motor-company-inc-4382338256?refId=ryq3%2FqQ7Q3vSbW844z4jxg%3D%3D&trackingId=8Dbv1jCNTJ%2Fn53c4%2BgArng%3D%3D&position=5&pageNum=0",
+          "category": "Internship",
+          "AI_coach": "1. 明确职业重心：你拥有6年工作经验，申请此类“Internship”（实习生）岗位在德国或美国职场均会被视为“降维求职”或“跨行重塑”。鉴于你拒绝重度政治沟通且背景为企业数字化，我强烈建议仅关注“AI Intern”岗位。其他岗位（如引擎、电气、机械）属于传统制造业的核心硬工程，与你背景偏差极大，获录可能性极低且不符合你的长期职业规划。 2. 策略调整：对于“AI Intern”，重点强调你利用低代码工具、知识管理系统提升企业效率的经验，将你的“数字化转型”背景包装为“AI赋能业务流的实践者”。 3. 注意事项：此岗位地点在加州（Santa Clarita），而非德国。如果你必须在德国工作，请勿浪费时间在此处；若考虑在美国发展，请针对AI Intern岗位调整简历，突出SharePoint、Co-Pilot等协同工具的应用经验，而非Matlab/CAD等工程技能。",
+          "AI_competiveness": "你的简历背景（企业工具、低代码、数字化、项目管理）与JD中的工程类实习（机械、动力、电气）存在严重的领域割裂。你的优势在于对业务流程的理解和协作工具（如SharePoint）的熟练度，这与“AI Intern”岗位中涉及利用数据存储和Co-Pilot协同的部分有交叉。对于其他工程类实习，你缺乏Matlab/Simulink/CAD/嵌入式系统等硬性背景，属于完全的跨专业申请，Gap极大。",
+          "ai_labels": "不适合的岗位（除AI Intern外），适合岗位（仅限AI Intern方向）"
+        },
+        "pairedItem": {
+          "item": 4
+        }
+      },
+      {
+        "json": {
+          "id": 8,
+          "created_at": "2026-03-11T19:30:36.176947+00:00",
+          "title": "Co-Op (Fall Term)",
+          "company": "Curtiss-Wright Corporation",
+          "location": "Pittsburgh, PA, USA",
+          "industry": "Defense and Space Manufacturing (国防与航天制造)",
+          "desc": "We are looking for Interns and/or Co-ops for the Fall semester at our Pittsburgh (Cheswick) location!Now Hiring For:Mechanical Engineering Interns and Co-opsHiring For The Following Departments:Defense Business Segment – multiple positionsCommercial NuclearAnalytical EngineeringStress and Thermal EngineeringManufacturing Engineering – multiple positionsElectrical Engineering Interns and Co-opsHiring For The Following Departments:Facilities Electrical EngineeringEngineering Processes and Resources – Product design – multiple positionsIndustrial Engineering Interns and Co-opsHiring For The Following Positions:Continuous Improvement – Lean Manufacturing Initiatives (Kaizen, 5S etc)Project Control Analyst – Developing Project SchedulesLogistics and Inventory ControlSupply Chain, Logistics , Business, IT and Accounting Co-ops and InternsHiring For The Following Positions:Buyer – multiple positionsContracts Administration – working in our Contracts DepartmentAccountingProject Control Analyst – developing project schedulesSupply Chain Data AnalystWelding Engineering Intern or Co-op Who We Are:Our ValuesEnvironmental, Social and GovernanceEMD a business unit of Curtiss-Wright in Cheswick, PA designs, manufactures, tests, and provides after-market support for the most advanced, proven and reliable critical function pumps, motors, generators, seals, control rod drive mechanisms and power conditioning electronics available anywhere in the world today. Curtiss-Wright EMD has a long-standing and distinguished reputation for the design, development, manufacture, and qualification of critical-function machining solutions for the United States Navy and the commercial nuclear utility industry. http://www.emd.cwfc.com/No unsolicited agency submittals please. Agency partners must be invited to participate in a search by our Talent Acquisition Team and have signed terms in place prior to any submittal. Resumes submitted directly to any Curtiss-Wright employee or affiliate will not qualify for fee payment, and therefore become the property of Curtiss-Wright. Compliance StatementThis position may require exposure to export-controlled information and subject to additional security screening. In the event information provided during the security screening reveals ineligibility to access export-controlled information, any offer of employment may be reconsidered or withdrawn.Curtiss-Wright values diversity in the workplace. All qualified applicants will receive consideration for employment without regard to race, color, religion, sex, sexual orientation, gender identity, national origin, disability or protected veteran status.If you require accommodation due to a disability at any time during the recruitment and/or assessment process, please contact Talent Acquisition and we will make all reasonable efforts to accommodate your request.",
+          "salary": "",
+          "posted_at": "2026-03-05",
+          "AI_requirements": "岗位核心要求拆解：1. 学生身份：仅限实习生或Co-op（通常为在读大学生）；2. 合规与背调：必须满足美国出口管制要求，需通过严格的安全审查；3. 职能分布：涵盖机械/电气工程、工业工程（流程改进、Lean、Kaizen）、项目控制、供应链与会计等职能；4. 背景需求：偏好工程类或商务/IT背景，侧重于制造业实操辅助。",
+          "AI_language": "英语流利（因涉及国防工业与美国法律合规，要求极高），未提及德语需求。",
+          "AI_match_score": "10",
+          "url": "https://www.linkedin.com/jobs/view/co-op-fall-term-at-curtiss-wright-corporation-4223518313?refId=ryq3%2FqQ7Q3vSbW844z4jxg%3D%3D&trackingId=q1DXs%2BiDlmCr3QS4jKpmiw%3D%3D&position=23&pageNum=0",
+          "category": "Internship / Co-op",
+          "AI_coach": "鉴于您在德国的求职背景，这个职位极其不推荐投递。理由如下：1. 地理位置错配：该岗位位于美国宾夕法尼亚州（Pittsburgh, PA），而非德国，无法满足您在德国发展的需求。2. 身份与背景门槛：JD明确提及“需接触出口管制信息（export-controlled information）”，这意味着该岗位极大概率仅限美国公民或绿卡持有者申请，中国背景候选人几乎不可能通过背景审查。3. 职业匹配度：您拥有6年资深经验，而这是Intern/Co-op岗位，不仅薪资极低，且工作内容多为基础行政、流程维护或制造辅助，与您追求的数字化产品/方案专家定位完全不符。建议您将精力集中在德国本土的工业软件（Industrial Software）、数字化转型咨询公司或大型制造业（如Siemens, Bosch, SAP）的数字化转型部门。",
+          "AI_competiveness": "硬性要求：1. 身份要求：必须符合ITAR（国际武器贸易条例）要求，即美国身份，此为硬性否决项。2. 学历要求：需要是当地大学在读学生（Intern/Co-op性质）。3. 专业领域：要求机械、电气、工业工程等硬核工程背景，或供应链/会计。简历匹配度：您的6年软件与企业数字化背景虽在IT/流程优化方向有重合，但缺乏该行业所需的专业领域知识（如核能、国防、制造流程控制）。差距极大。",
+          "ai_labels": "不适合的岗位"
+        },
+        "pairedItem": {
+          "item": 5
+        }
+      },
+      {
+        "json": {
+          "id": 9,
+          "created_at": "2026-03-11T19:30:36.176947+00:00",
+          "title": "Project Management Intern (IT Intern 3)",
+          "company": "HII (Huntington Ingalls Industries)",
+          "location": "Norfolk, VA, USA",
+          "industry": "国防与军事工业（Defense & Aerospace）",
+          "desc": "Requisition Number: 27483Required Travel: 0 - 10%Employment Type: Part Time/Hourly/Non-ExemptAnticipated Salary Range: $43,127.00 - $52,000.00Security Clearance: Ability to ObtainLevel of Experience: InternThis opportunity resides with Global Security (GS). Mission Technologies' Global Security (GS) group comprises live, virtual, constructive (LVC) solutions; fleet sustainment; nuclear and environmental; and Australia business.As a trusted partner to our military customers, HII designs, develops and operates the largest LVC enterprise that prepares warfighters for cross-domain battle. With advanced technologies to enable mission readiness, HII understands that preparation requires full coordination-not readiness in piece-parts.For more than 40 years, the U.S. Navy has entrusted HII to maintain and modernize the vast majority of its fleet. With a holistic approach to life-cycle maritime defense systems-from small watercraft to submarines, surface combatants and aircraft carriers-HII ensures a high state of readiness.HII supports the Department of Energy's national security mission through the management and operation of its sites, as well as the safe cleanup of legacy waste across the country. HII meets clients' toughest nuclear and environmental challenges.Meet HII's Mission Technologies DivisionOur team of more than 7,000 professionals worldwide delivers all-domain expertise and advanced technologies in service of mission partners across the globe. Mission Technologies is leading the next evolution of national defense - the data evolution - by accelerating a breadth of national security solutions for government and commercial customers. Our capabilities range from C5ISR, AI and Big Data, cyber operations and synthetic training environments to fleet sustainment, environmental remediation and the largest family of unmanned underwater vehicles in every class. Find the role that's right for you. Apply today. We look forward to meeting you.To learn more about Mission Technologies, click here for a short video: https://vimeo.com/732533072Job DescriptionAre you a mission-driven individual looking for a career that truly matters? This is more than your average mission.Join HII - Mission Technologies and make an impact by supporting our Global Security team in managing multiple small to mid-scale IT and software systems projects right here in Hampton Roads.Our Project Management Support Internship is a temporary role designed to prepare college students for entry into the workforce through hands-on experience and training aligned with both their field of study and the needs of our business. This opportunity is open to rising juniors and seniors who are available to work full-time (40 hours per week) for at least 10 weeks during summer 2026.Essential Job ResponsibilitiesProvide project management support for complex IT and Software Systems engineering projects. Coordinate with internal leaders to determine project responsibilities by identifying project phases, resource requirements, and other necessary elements. Assist in maintaining project schedules by monitoring project progress, coordinating activities and resolving problems. Provide support in coordinating amongst various teams in different engineering disciplines to present a unified, integrated product to project stakeholders. Assist in preparing project status reports by collecting, analyzing, and summarizing information and trends, and recommending actions. In support of assigned functional area, perform professional administrative work of an introductory nature gradually increasing in level of difficulty and responsibility. Identify, analyze, and capture project specific lessons learned. Perform work that is pertinent to field study. Performs additional duties and responsibilities as assigned. Minimum QualificationsHigh School Diploma or equivalent + Must be working towards a Bachelor's degree with between 40% and 60% of the required credits completed. Must have an overall cumulative GPA of 3.0 out of 4.0 or higher while participating in this internship. Must have the ability to obtain and maintain a DOD secret clearance. Preferred RequirementsExcellent writing, communication and listening skills. Critical thinking and problem-solving skills. Must be diligent, hardworking and a fast learner. Desires to gain professional experience and is eager to learn. Familiarity with Microsoft Excel. Preference for Business, Finance, Accounting, Information Technology, Software Engineering, or related curriculum. Physical RequirementsJob performance will normally require only minor lifting and carrying of boxes of records or equipment.HII is more than a job - it's an opportunity to build a new future. We offer competitive benefits such as best-in-class medical, dental and vision plan choices; wellness resources; employee assistance programs; Savings Plan Options (401(k)); financial planning tools, life insurance; employee discounts; paid holidays and paid time off; tuition reimbursement; as well as early childhood and post-secondary education scholarships. Bonus/other non-recurrent compensation is occasionally offered for qualified positions, and if applicable to this role will be addressed by the recruiter at the screening phase of application.Why HIIWe build the world's most powerful, survivable naval ships and defense technology solutions that safeguard our seas, sky, land, space and cyber. Our workforce includes skilled tradespeople; artificial intelligence, machine learning (AI/ML) experts; engineers; technologists; scientists; logistics experts; and business administration professionals.Recognized as one of America's top large company employers, we are a values and ethics driven organization that puts people's safety and well-being first. Regardless of your role or where you serve, at HII, you'll find a supportive and welcoming environment, competitive benefits, and valuable educational and training programs for continual career growth at every stage of your career.Together we are working to ensure a future where everyone can be free and thrive.All qualified applicants will receive consideration for employment without regard to race, color, religion, gender, gender identity or expression, sexual orientation, national origin, physical or mental disability, age, or veteran status or any other basis protected by federal, state, or local law.Do You Need Assistance?If you need a reasonable accommodation for any part of the employment process, please send an e-mail to buildyourcareer@hii-co.com and let us know the nature of your request and your contact information. Reasonable accommodations are considered on a case-by-case basis. Please note that only those inquiries concerning a request for reasonable accommodation will be responded to from this email address. Additionally, you may also call 1-844-849-8463 for assistance. Press #3 for HII Mission Technologies.",
+          "salary": "",
+          "posted_at": "2026-03-08",
+          "AI_requirements": "1. 学历要求：必须为在校生，大二或大三阶段，GPA 3.0以上；\n2. 安全许可：具备获取美国国防部（DOD）机密许可的资格（通常要求美国国籍）；\n3. 核心职能：协助处理IT及软件工程项目的进度监控、资源协调、会议组织及状态报告撰写；\n4. 能力要求：行政类基础协作、基础项目进度管理、Excel 数据整理、跨团队协调。",
+          "AI_language": "英语：要求具备优秀的写作、沟通和倾听能力；未提及德语要求（因其为美国本土防御岗位）。",
+          "AI_match_score": "0",
+          "url": "https://www.linkedin.com/jobs/view/project-management-intern-it-intern-3-at-hii-4381399776?refId=ryq3%2FqQ7Q3vSbW844z4jxg%3D%3D&trackingId=NjYYF5RQOIJWvQXhPpLgrQ%3D%3D&position=18&pageNum=0",
+          "category": "Internship (Temporary)",
+          "AI_coach": "直接放弃。该岗位不仅在地理位置上与德国市场无关，且其性质完全不符合你的职业背景和诉求。首先，这是一个面向美国在读大学生的暑期实习（Internship），要求具备美国国防安全许可（DOD Security Clearance），这是非美籍或未在美居住的候选人无法获取的。其次，你的背景是6年行业经验的专家，去应聘一个需要从大学期间兼顾学业的实习岗，属于严重的“降维/错位投递”。建议将精力集中在德国当地的数字化转型咨询公司、工业互联网（IIoT）企业或中大型制造企业的数字化部门，寻找 Product Manager 或 Solution Architect 相关岗位。",
+          "AI_competiveness": "1. 学历要求Gap：JD要求申请人必须是“在读大学生（大二/大三）”，且需满足特定学分比例和GPA，这与你已有6年工作经验的资深背景严重冲突；\n2. 法律与地域Gap：JD明确要求 Ability to Obtain DOD Secret Clearance（美国国防部机密安全许可），这通常仅向美国公民开放，对于在德求职的中国背景候选人而言是不可能的硬性门槛；\n3. 岗位定位Gap：虽然你具备项目管理背景，但该岗位是基础行政+初级辅助性质（Intern），无法发挥你6年在企业数字化工具方面的专业积累；\n4. 地理位置Gap：岗位地点在美国弗吉尼亚州（Norfolk, VA），而非德国。",
+          "ai_labels": "不适合的岗位"
+        },
+        "pairedItem": {
+          "item": 6
+        }
+      }
+    ]
+  },
+  "connections": {
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Indeed",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Stepstone",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Run an Actor and get dataset",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "Resume and Position analysis",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Indeed": {
+      "main": [
+        [
+          {
+            "node": "Normalize field names1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Stepstone": {
+      "main": [
+        [
+          {
+            "node": "Normalize field names2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Run an Actor and get dataset": {
+      "main": [
+        [
+          {
+            "node": "Normalize field names",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a text message": {
+      "main": [
+        []
+      ]
+    },
+    "Google Gemini Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Resume and Position analysis",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Structured Output Parser",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get many rows": {
+      "main": [
+        [
+          {
+            "node": "Merge data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Download file": {
+      "main": [
+        [
+          {
+            "node": "Extract from File",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract from File": {
+      "main": [
+        [
+          {
+            "node": "Resume and Position analysis",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Normalize field names": {
+      "main": [
+        [
+          {
+            "node": "Merge data",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Normalize field names1": {
+      "main": [
+        [
+          {
+            "node": "Merge data",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Normalize field names2": {
+      "main": [
+        [
+          {
+            "node": "Merge data",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Merge data": {
+      "main": [
+        [
+          {
+            "node": "Resume and Position analysis",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Parse data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Resume and Position analysis": {
+      "main": [
+        [
+          {
+            "node": "Parse data",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Parse data": {
+      "main": [
+        [
+          {
+            "node": "save into database",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "save into database": {
+      "main": [
+        [
+          {
+            "node": "save into google sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "save into google sheet": {
+      "main": [
+        [
+          {
+            "node": "define notify rules",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "define notify rules": {
+      "main": [
+        [
+          {
+            "node": "Send a text message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "151ed204-41be-4ab2-9f09-3fe53df630c7",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "9831deab1537d7453a46815ecb654e33912c0d2e075e1c92456fb0b53242296b"
+  },
+  "id": "try1ELoGOgmhogbk",
+  "tags": []
+}
