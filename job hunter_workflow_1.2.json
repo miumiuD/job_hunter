@@ -1,0 +1,1343 @@
+{
+  "name": "job hunter",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 7
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        -256,
+        464
+      ],
+      "id": "efbf46a0-e216-4cc8-811f-d284565d8453",
+      "name": "Schedule Trigger",
+      "alwaysOutputData": true,
+      "retryOnFail": true
+    },
+    {
+      "parameters": {
+        "schemaType": "manual",
+        "inputSchema": "={\n  \"title\": \"String | 岗位名称\",\n  \"company\": \"String | 公司名称\",\n  \"industry\": \"String | 所属行业\",\n  \"location\": \"String | 办公地点\",\n  \"url\": \"String (URL) | 职位链接\",\n  \"posted_at\": \"String (YYYY-MM-DD) | 发布日期\",\n  \"category\": \"String (Enum) | 要求输入这几个内容，Full-time, Part-time, working student, intern, other \",\n  \"ai_labels\": \"String (Comma-separated) | 目标岗位,适合岗位\",\n  \"ai_requirements\": \"Text | 核心要求及拆解\",\n  \"ai_language\": \"String (Enum) | 提炼对英语和德语的要求\",\n  \"ai_comp\": \"Text | 优势与 Gap 分析\",\n  \"ai_comp_score\": \"Integer (0-100) | 匹配得分\",\n  \"ai_pros\": \"Text | 业务前景与跳板价值\",\n  \"ai_coach\": \"Text | 具体的投递策略\"\n}",
+        "autoFix": true
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.3,
+      "position": [
+        1056,
+        832
+      ],
+      "id": "b688e0f3-e459-40a5-bf27-da4200e714f1",
+      "name": "Structured Output Parser",
+      "retryOnFail": false,
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "chatId": "-5191427337",
+        "text": "={{ $json.summary_report }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1888,
+        544
+      ],
+      "id": "d59f96b1-8b04-4535-a449-fdcaa30f4e98",
+      "name": "Send a text message",
+      "webhookId": "96b53414-e38b-4706-befb-cee24c543b42",
+      "credentials": {
+        "telegramApi": {
+          "id": "FPvrhENYUHnQvgIL",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "Run actor and get dataset",
+        "actorId": {
+          "__rl": true,
+          "value": "TrtlecxAsNRbKl1na",
+          "mode": "list",
+          "cachedResultName": "💡 Indeed Jobs Scraper (valig/indeed-jobs-scraper)",
+          "cachedResultUrl": "https://console.apify.com/actors/TrtlecxAsNRbKl1na/input"
+        },
+        "customBody": "{\n    \"flattenOutput\": false,\n    \"includeCompanyDetails\": false,\n    \"maxJobs\": 50,\n    \"onlyExternalJobs\": false,\n    \"proxy\": {\n        \"useApifyProxy\": true,\n        \"apifyProxyGroups\": [\n            \"RESIDENTIAL\"\n        ]\n    },\n    \"startUrls\": [\n        {\n            \"url\": \"https://de.indeed.com/jobs?q=product+manager&l=german&from=searchOnDesktopSerp&vjk=d4419867bd2459c8\"\n        },\n        {\n            \"url\": \"https://de.indeed.com/jobs?q=Produkt+Werkstudent&l=german&sort=date&fromage=7&sc=0kf%3Aattr%284BQ7N%7C75GKK%7CCF3CP%7CN6AA6%7CVDTG7%252COR%29cmpsec%28CPGHF%7CNKR5F%252COR%29%3B&from=searchOnDesktopSerp&vjk=b0212ff5bb6a7f75\"\n        }\n    ]\n}",
+        "timeout": {}
+      },
+      "type": "@apify/n8n-nodes-apify.apify",
+      "typeVersion": 1,
+      "position": [
+        -16,
+        560
+      ],
+      "id": "2789d2f8-f8a5-45f0-aeea-5e1d4757e84b",
+      "name": "Indeed",
+      "credentials": {
+        "apifyApi": {
+          "id": "RAFpUMpXAF01ssm4",
+          "name": "Apify account 2"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "operation": "Run actor and get dataset",
+        "actorId": {
+          "__rl": true,
+          "value": "pIVhuvHZkW2Llfjrr",
+          "mode": "list",
+          "cachedResultName": "Stepstone.de [Only $1💰] Jobs Scraper (memo23/stepstone-search-cheerio-ppr)",
+          "cachedResultUrl": "https://console.apify.com/actors/pIVhuvHZkW2Llfjrr/input"
+        },
+        "customBody": "{\n    \"maxRequestRetries\": 50,\n    \"proxy\": {\n        \"useApifyProxy\": false\n    },\n    \"startUrls\": [\n        {\n            \"url\": \"https://www.stepstone.de/jobs/product-manager/in-berlin?radius=30&searchOrigin=Resultlist_top-search\"\n        },\n        {\n            \"url\": \"https://www.stepstone.de/jobs/working-student-ai/in-berlin-or-m%c3%bcnchen-or-hamburg-or-d%c3%bcsseldorf?radius=30&sort=2&action=sort_publish&searchOrigin=Resultlist_top-search\"\n        },\n        {\n            \"url\": \"https://www.stepstone.de/jobs/working-student-product-management/in-berlin-or-m%c3%bcnchen-or-hamburg-or-d%c3%bcsseldorf?whatType=autosuggest&radius=30&action=facet_selected%3bage%3bage_7&ag=age_7&searchOrigin=Resultlist_top-search\"\n        },\n        {\n            \"url\": \"https://www.stepstone.de/jobs/working-student-automation/in-berlin-or-m%c3%bcnchen-or-hamburg-or-d%c3%bcsseldorf?radius=30&sort=2&action=sort_publish&ag=age_7&se=21000&searchOrigin=Resultlist_top-search\"\n        },\n      {\n            \"url\": \"https://www.stepstone.de/jobs/ai-working-student?action=facet_selected%3bage%3bage_1&ag=age_1&searchOrigin=membersarea\"\n        }\n    ]\n}",
+        "timeout": {}
+      },
+      "type": "@apify/n8n-nodes-apify.apify",
+      "typeVersion": 1,
+      "position": [
+        -16,
+        752
+      ],
+      "id": "148f5218-776e-41b5-a940-b23467c70755",
+      "name": "Stepstone",
+      "credentials": {
+        "apifyApi": {
+          "id": "RAFpUMpXAF01ssm4",
+          "name": "Apify account 2"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "operation": "Run actor and get dataset",
+        "actorId": {
+          "__rl": true,
+          "value": "hKByXkMQaC5Qt9UMN",
+          "mode": "list",
+          "cachedResultName": "Linkedin Jobs Scraper (curious_coder/linkedin-jobs-scraper)",
+          "cachedResultUrl": "https://console.apify.com/actors/hKByXkMQaC5Qt9UMN/input"
+        },
+        "customBody": "{\n    \"count\": 50,\n    \"scrapeCompany\": true,\n    \"splitByLocation\": false,\n    \"urls\": [\n        \"https://www.linkedin.com/jobs/search-results/?currentJobId=4370670771&keywords=product&origin=JOB_SEARCH_PAGE_LOCATION_AUTOCOMPLETE&referralSearchId=fey5YKvUn2v%2BBqk6tBXQlg%3D%3D&geoId=101282230&f_TPR=r604800\",\n        \"https://www.linkedin.com/jobs/search-results/?currentJobId=4379178731&keywords=working%20student%20product&origin=JOB_SEARCH_PAGE_JOB_FILTER&referralSearchId=yCND3v24Ly807W%2FhL2bhRw%3D%3D&f_TPR=r604800\",\n        \"https://www.linkedin.com/jobs/search/?currentJobId=4238483546&distance=25&f_F=it%2Canls%2Cprdm%2Ccnsl&f_I=4%2C96%2C11%2C6%2C112%2C1594&f_T=6225%2C13%2C9608%2C71%2C29%2C27%2C4924&f_TPR=r604800&geoId=101282230&keywords=working%20student%20product&origin=JOB_SEARCH_PAGE_JOB_FILTER&refresh=true&sortBy=DD\",\n\n\"https://www.linkedin.com/jobs/search/?currentJobId=4378312554&geoId=103035651&keywords=ai%20working%20student&origin=JOB_SEARCH_PAGE_SEARCH_BUTTON&refresh=true\"\n    ]\n}",
+        "timeout": {}
+      },
+      "type": "@apify/n8n-nodes-apify.apify",
+      "typeVersion": 1,
+      "position": [
+        -16,
+        368
+      ],
+      "id": "d87f5939-213c-411e-ab3d-1843423f03f6",
+      "name": "Run an Actor and get dataset",
+      "credentials": {
+        "apifyApi": {
+          "id": "RAFpUMpXAF01ssm4",
+          "name": "Apify account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-3.1-flash-lite-preview",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        864,
+        1088
+      ],
+      "id": "fbaa3f10-4e32-4840-8587-def3ae989137",
+      "name": "Google Gemini Chat Model1",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "Ycj8RJvue8hsDdjF",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        1056,
+        1088
+      ],
+      "id": "d715d418-9945-46dd-b951-b0950c1175f5",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "Ycj8RJvue8hsDdjF",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "serviceAccount",
+        "operation": "download",
+        "fileId": {
+          "__rl": true,
+          "value": "1wzdjwGFAowLLqqAVf-Yk-Hlrp-WWvEJ6",
+          "mode": "list",
+          "cachedResultName": "EN_CV_1.1.pdf",
+          "cachedResultUrl": "https://drive.google.com/file/d/1wzdjwGFAowLLqqAVf-Yk-Hlrp-WWvEJ6/view?usp=drivesdk"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        -16,
+        1056
+      ],
+      "id": "0067c86a-8b30-4490-b798-db57e6caca6a",
+      "name": "Download file",
+      "credentials": {
+        "googleApi": {
+          "id": "DAAoOUEiXGc27nro",
+          "name": "n8n service account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "pdf",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1.1,
+      "position": [
+        192,
+        1056
+      ],
+      "id": "ca7c6c9e-a81b-45f2-9bb5-cbd8f36663f7",
+      "name": "Extract from File",
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "bc4ddfa3-42a6-462d-bd93-805c2338fe01",
+              "name": "title",
+              "value": "={{ $json.title }}",
+              "type": "string"
+            },
+            {
+              "id": "8886aa94-447e-45b2-9961-4b2ed89195fa",
+              "name": "company",
+              "value": "={{ $json.companyName }}",
+              "type": "string"
+            },
+            {
+              "id": "798bf8b0-447f-4ba7-ae16-78b20006ae15",
+              "name": "location",
+              "value": "={{ $json.location }}",
+              "type": "string"
+            },
+            {
+              "id": "98ad5247-5af5-4e1d-ab38-86257f71434e",
+              "name": "industry",
+              "value": "={{ $json.industries }}",
+              "type": "string"
+            },
+            {
+              "id": "78d9510e-8db6-487e-8075-d41c5afd87f8",
+              "name": "desc",
+              "value": "={{ $json.descriptionText }}",
+              "type": "string"
+            },
+            {
+              "id": "aee53531-4453-422a-8eb4-e79e7f6cdce3",
+              "name": "salary",
+              "value": "={{ $json.salary }}",
+              "type": "string"
+            },
+            {
+              "id": "48bf9ddb-900c-47e6-b32e-5c166a27f4fd",
+              "name": "posttime",
+              "value": "={{ $json.postedAt }}",
+              "type": "string"
+            },
+            {
+              "id": "d456f7ac-1a0d-4885-87ee-066ec0843634",
+              "name": "url",
+              "value": "={{ $json.link }}",
+              "type": "string"
+            },
+            {
+              "id": "a13d4fc4-9ef1-42b3-aa47-30cea6d37841",
+              "name": "source",
+              "value": "linkedin",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        208,
+        368
+      ],
+      "id": "9152decc-1a7a-48a4-b8d0-5123cb3b7d2d",
+      "name": "Normalize field names"
+    },
+    {
+      "parameters": {
+        "mode": "raw",
+        "jsonOutput": "={\n  \"title\": \"={{ $json.title }}\",\n  \"location\": \"={{ $json.location.city }}\",\n  \"company\": \"={{ $json.employer.name }}\",\n  \"industry\": \"={{ $json.employer.industry }}\",\n  \"desc\": \"={{ $json.description.text }}\",\n  \"salary\": \"={{ $json.employer.revenue }}\",\n  \"posttime\": \"={{ $json.datePublished }}\",\n  \"url\": \"={{ $json.url }}\",\n  \"source\": \"=indeed\"\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        208,
+        560
+      ],
+      "id": "ffeab5c8-9b67-4826-a978-7efd1666b14a",
+      "name": "Normalize field names1",
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "mode": "raw",
+        "jsonOutput": "={\n  \"title\": \"={{ $json.title }}\",\n  \"location\": \"={{ $json.location }}\",\n  \"company\": \"={{ $json.companyName }}\",\n  \"industry\": \"={{ $json.metaData?.industry || 'Food & Beverage' }}\",\n  \"desc\": \"={{ $json.textSnippet }}\",\n  \"salary\": \"={{ $json.salary || 'Negotiable' }}\",\n  \"posttime\": \"={{ $json.datePosted }}\",\n  \"url\": \"={{ $json.url }}\",\n  \"source\": \"=stepstone\"\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        208,
+        752
+      ],
+      "id": "7ffd5f1d-1faa-45bf-a7e5-68f6840d8673",
+      "name": "Normalize field names2"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=title：{{ $json.title }}\ncompany：{{ $json.company }}\nlocation：{{ $json.location }}\nindustry：{{ $json.industry }}\ndesc：{{ $json.desc }}\nsalary：{{ $json.salary }}\nposted_at：{{ $json.posttime }}\nsource：{{ $json.source }}\nurl：{{ $json.url }}",
+        "hasOutputParser": true,
+        "options": {
+          "systemMessage": "=# Role\n你是一位拥有 10 年经验的欧洲/德国市场资深技术猎头。你深谙德国数字，科技市场的招聘和发展（尤其是AI, Automation, Digitalization等2B领域），你深入研究过不同人在面对不同国家候选人时的心理预期，擅长挖掘中国背景候选人的优势，您能从商业前景角度判断岗位是否具有“钱景”或“跳板”价值，并给中国候选人提供务实的在德国的求职计划\n\n# Context\n- 用户：在德求职的中国女性，31岁，有6年中国国内的工作经验，核心背景在【软件，企业工具，协同和效率工具，低代码工具，项目管理，知识管理，企业数字化领域】。\n- 职业目标（Dream）：偏向ToB/工具类/AI/自动化/流程数字化/企业数字化等的产品，解决方案相关的岗位。不适合代码开发测试背景的工作，拒绝重度沟通（Politics/Coordination）。\n- 语言：德英双语办公无障碍，但不擅长高压社交/撕逼。\n- 简历内容：{{ $json.text }}\n\n# Task\n对比简历与 JD，进行多维度标签化分析与竞争力评估，按照结构化输出的要求输出内容\n\n# Evaluation Logic\n1. AI_requirements:把{{ $json.desc }}中的岗位要求翻译为中文，然后分析这个岗位核心能力要求\n2. AI_language:提炼出该岗位对语言的要求水平\n3. AI_label：打标签，分别为目标岗位（符合用户求职目标），适合岗位（从用户简历看能做），不适合的岗位，可以打多个标签\n4. AI_comp：逐条对比 JD 的硬性要求（Must-have）与简历。分析用户的优势和gap。\n5. AI_pros:业务方向分析：是夕阳行业数字化还是前沿 AI 应用？是“高薪钱景”岗，还是适合作为进入德国核心产业的“优质跳板”？相比于是否是大公司，用户更关注工作内容，业务方向\n\n# Output Schema (必须严格遵守)\n{\n  \"title\": \"String | 岗位名称\",\n  \"company\": \"String | 公司名称\",\n  \"industry\": \"String | 所属行业\",\n  \"location\": \"String | 办公地点\",\n  \"url\": \"String (URL) | 职位链接\",\n  \"posted_at\": \"String (YYYY-MM-DD) | 发布日期\",\n  \"category\": \"String (Enum) | 必须且只能从以下选项中选择：\"Full time\",\"Working student\",\"Internship\",\"Other\"\n  \"ai_labels\": \"String (Comma-separated) | 目标岗位,适合岗位\",\n  \"ai_requirements\": \"Text | 核心要求及拆解\",\n  \"ai_language\": \"String (Enum) |提炼对英语和德语的要求\",\n  \"ai_comp\": \"Text | 优势与 Gap 分析\",\n  \"ai_comp_score\": \"Integer (0-100) | 匹配得分\",\n  \"ai_pros\": \"Text | 业务前景与跳板价值\",\n  \"ai_coach\": \"Text | 具体的投递策略\"\n}"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        992,
+        576
+      ],
+      "id": "9697299d-41c1-413b-a6bd-86eda9c89333",
+      "name": "Resume and Position analysis",
+      "retryOnFail": false,
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "authentication": "serviceAccount",
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "https://docs.google.com/spreadsheets/d/1xNz2T1oevRutNwNgjbpoH3eUWDzeCaHP3szjHo3AdgU/edit?usp=sharing",
+          "mode": "url"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "Sheet1",
+          "mode": "name"
+        },
+        "columns": {
+          "mappingMode": "autoMapInputData",
+          "value": {
+            "location": "={{ $('Merge data').item.json.location }}",
+            "company": "={{ $('Merge data').item.json.company }}",
+            "desc": "={{ $('Merge data').item.json.desc }}",
+            "create_time": "={{ $now.toFormat('yyyy-MM-dd') }}",
+            "url": "={{ $('Merge data').item.json.url }}",
+            "title": "={{ $json.output.title }}",
+            "industry": "={{ $('Merge data').item.json.industry }}"
+          },
+          "matchingColumns": [
+            "id"
+          ],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "created_at",
+              "displayName": "created_at",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "title",
+              "displayName": "title",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "company",
+              "displayName": "company",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "location",
+              "displayName": "location",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "industry",
+              "displayName": "industry",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "desc",
+              "displayName": "desc",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "salary",
+              "displayName": "salary",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "posted_at",
+              "displayName": "posted_at",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "AI_requirements",
+              "displayName": "AI_requirements",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "AI_language",
+              "displayName": "AI_language",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "AI_match_score",
+              "displayName": "AI_match_score",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "url",
+              "displayName": "url",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "category",
+              "displayName": "category",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "AI_coach",
+              "displayName": "AI_coach",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "AI_competiveness",
+              "displayName": "AI_competiveness",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "ai_labels",
+              "displayName": "ai_labels",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "create_time",
+              "displayName": "create_time",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1424,
+        736
+      ],
+      "id": "30f7682a-10f7-4eef-bc25-8a0f409cf75c",
+      "name": "save into google sheet",
+      "credentials": {
+        "googleApi": {
+          "id": "DAAoOUEiXGc27nro",
+          "name": "n8n service account"
+        }
+      },
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "jsCode": "// 获取上游 Airtable 节点的所有结果\nconst allItems = $input.all();\n\n// 1. 初始化统计变量\nlet targetCount = 0;   \nlet suitableCount = 0; \nlet processedCount = allItems.length;\n\n// 2. 预处理数据：进入 fields 层级提取\nlet jobs = allItems.map(item => {\n  // 【关键点】从 fields 对象中取值\n  const f = item.json.fields || {}; \n  \n  // 转换分数 (适配你的字段名 AI_match_score)\n  const score = parseInt(f.AI_match_score) || 0;\n  \n  // 统计标签逻辑\n  const labels = f.AI_labels || \"\";\n  if (labels.includes(\"目标岗位\")) targetCount++;\n  if (labels.includes(\"适合岗位\")) suitableCount++;\n  \n  // 将所有字段拉平返回，方便后面 summaryList 使用\n  return {\n    title: f.title,\n    company: f.company,\n    location: f.location,\n    posted_at: f.created_at, // 映射 Airtable 里的 created_at\n    AI_requirements: f.AI_requirements,\n    url: f.url,\n    score: score\n  };\n});\n\n// 3. 排序逻辑：按分数从高到低\njobs.sort((a, b) => b.score - a.score);\n\n// 4. 获取前 5 个岗位\nconst top5 = jobs.slice(0, 5);\n\n// 5. 构建汇总列表\nlet summaryList = top5.map((job, index) => {\n  return `${index + 1}. **${job.title || '未知岗位'}** (评分: ${job.score})\\n` +\n         `   - **公司**: ${job.company || '未知'}\\n` +\n         `   - **地点**: ${job.location || '未知'}\\n` +\n         `   - **发布时间**: ${job.posted_at || '未知'}\\n` +\n         `   - **核心要求**: ${job.AI_requirements ? job.AI_requirements.substring(0, 80) + '...' : '无'}\\n` +\n         `   - **职位链接**: [点击查看](${job.url || '#'})`;\n}).join('\\n\\n');\n\n// 6. 返回最终日报结果\nreturn {\n  total_processed: processedCount,\n  target_total: targetCount,\n  suitable_total: suitableCount,\n  summary_report: `## 🚀 今日求职日报 (${$now.toFormat('yyyy-MM-dd')})\\n\\n` +\n                  `今天共处理了 **${processedCount}** 个岗位：\\n` +\n                  `- 🎯 **目标岗位**: ${targetCount} 个\\n` +\n                  `- ✅ **适合岗位**: ${suitableCount} 个\\n\\n` +\n                  `---\\n\\n` +\n                  `## 🔥 匹配度最高的前 5 个机会\\n\\n` +\n                  (summaryList || \"今天没有找到合适的岗位推荐。\")\n};"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1680,
+        544
+      ],
+      "id": "e587c958-299d-41e0-af38-1701a66472f6",
+      "name": "define notify rules"
+    },
+    {
+      "parameters": {
+        "content": "## Data Scraping \nScrape target job postings from major job platforms, normalize fields across sources, and deduplicate against the database.",
+        "height": 944,
+        "width": 752
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -352,
+        16
+      ],
+      "typeVersion": 1,
+      "id": "b48808b7-cbf6-44f8-8918-75fba7ba45b0",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "content": "## AI Analysis\nAnalyze and match job postings against the resume and job preferences, then rank and recommend based on fit.",
+        "height": 1504,
+        "width": 512,
+        "color": 3
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        832,
+        16
+      ],
+      "typeVersion": 1,
+      "id": "6a845b11-6300-432c-90f8-9a05be0cdedf",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "content": "## Resume Parsing\nRead resume from Google Drive and convert it into AI-readable text.",
+        "height": 256,
+        "width": 752
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -352,
+        960
+      ],
+      "typeVersion": 1,
+      "id": "038d3a93-d452-4426-b1f0-6e811edd7c40",
+      "name": "Sticky Note2"
+    },
+    {
+      "parameters": {
+        "content": "## Data Storage\nStore results in the database and Google Sheets for easy review and analysis.",
+        "height": 1504,
+        "width": 272,
+        "color": 6
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        1344,
+        16
+      ],
+      "typeVersion": 1,
+      "id": "2b8aad17-f764-47a4-b7a7-2cd456518079",
+      "name": "Sticky Note3"
+    },
+    {
+      "parameters": {
+        "content": "## Notification\nSend high-match job alerts via Telegram.",
+        "height": 1504,
+        "width": 448,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        1616,
+        16
+      ],
+      "typeVersion": 1,
+      "id": "dac2f37f-cf7c-4190-b83d-8f37d8ea59c0",
+      "name": "Sticky Note4"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.errorTrigger",
+      "typeVersion": 1,
+      "position": [
+        -192,
+        1344
+      ],
+      "id": "ce6f9802-c443-4186-b015-42514004bef1",
+      "name": "Error Trigger"
+    },
+    {
+      "parameters": {
+        "chatId": "-5191427337",
+        "text": "=🚨 Workflow Error Alert\n\n❌ Workflow: {{ $workflow.name }}\n📍 Node: {{ $json.execution.lastNodeExecuted }}\n💬 Error: {{ $json.execution.error.message }}\n🕐 Time: {{ $now.toISO() }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        32,
+        1344
+      ],
+      "id": "6b96f87a-af93-4f6f-91e6-48144a13801f",
+      "name": "Send a text message1",
+      "webhookId": "96b53414-e38b-4706-befb-cee24c543b42",
+      "credentials": {
+        "telegramApi": {
+          "id": "FPvrhENYUHnQvgIL",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "## Error Alerting\nnotify through telegram when the workflow fails",
+        "height": 304,
+        "width": 752
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -352,
+        1216
+      ],
+      "typeVersion": 1,
+      "id": "46f69971-12ff-4b65-9933-22ed5eb9c901",
+      "name": "Sticky Note5"
+    },
+    {
+      "parameters": {
+        "numberInputs": 3
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        448,
+        544
+      ],
+      "id": "1bd8bf59-f0da-4ed9-a42d-80507d1c5e8e",
+      "name": "Merge data1"
+    },
+    {
+      "parameters": {
+        "operation": "create",
+        "base": {
+          "__rl": true,
+          "value": "apphB3hmv7s7HiJ8o",
+          "mode": "list",
+          "cachedResultName": "job hunter ",
+          "cachedResultUrl": "https://airtable.com/apphB3hmv7s7HiJ8o"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tbliGnCztNQtHEwOR",
+          "mode": "list",
+          "cachedResultName": "sheet1",
+          "cachedResultUrl": "https://airtable.com/apphB3hmv7s7HiJ8o/tbliGnCztNQtHEwOR"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "title": "={{ $json.output.title }}",
+            "company": "={{ $json.output.company }}",
+            "location": "={{ $json.output.location }}",
+            "industry": "={{ $json.output.industry }}",
+            "posted_at": "={{ $json.output.posted_at }}",
+            "AI_requirements": "={{ $json.output.ai_requirements }}",
+            "category": "={{ $json.output.category }}",
+            "AI_language": "={{ $json.output.ai_language }}",
+            "AI_match_score": "={{ $json.output.ai_comp_score }}",
+            "AI_competiveness": "={{ $json.output.ai_comp }}",
+            "AI_coach": "={{ $json.output.ai_coach }}",
+            "AI_labels": "={{ $json.output.ai_labels }}",
+            "url": "={{ $json.output.url }}",
+            "desc": "={{ $('Compare Datasets').item.json.desc }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": false
+            },
+            {
+              "id": "created_at",
+              "displayName": "created_at",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": false
+            },
+            {
+              "id": "title",
+              "displayName": "title",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "company",
+              "displayName": "company",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "location",
+              "displayName": "location",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "industry",
+              "displayName": "industry",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "desc",
+              "displayName": "desc",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "salary",
+              "displayName": "salary",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "posted_at",
+              "displayName": "posted_at",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "category",
+              "displayName": "category",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "AI_requirements",
+              "displayName": "AI_requirements",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "AI_language",
+              "displayName": "AI_language",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "AI_match_score",
+              "displayName": "AI_match_score",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "AI_competiveness",
+              "displayName": "AI_competiveness",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "AI_coach",
+              "displayName": "AI_coach",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "AI_labels",
+              "displayName": "AI_labels",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "url",
+              "displayName": "url",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "action",
+              "displayName": "action",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "重点关注",
+                  "value": "重点关注"
+                },
+                {
+                  "name": "普通申请",
+                  "value": "普通申请"
+                },
+                {
+                  "name": "不申请",
+                  "value": "不申请"
+                },
+                {
+                  "name": "不适合",
+                  "value": "不适合"
+                }
+              ],
+              "readOnly": false,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        1424,
+        544
+      ],
+      "id": "84248de1-ab29-4e5d-be79-5cfd5d7ce040",
+      "name": "Create a record",
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "bp5JFTVlYzS39VXy",
+          "name": "Airtable Personal Access Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "search",
+        "base": {
+          "__rl": true,
+          "value": "apphB3hmv7s7HiJ8o",
+          "mode": "list",
+          "cachedResultName": "job hunter ",
+          "cachedResultUrl": "https://airtable.com/apphB3hmv7s7HiJ8o"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tbliGnCztNQtHEwOR",
+          "mode": "list",
+          "cachedResultName": "sheet1",
+          "cachedResultUrl": "https://airtable.com/apphB3hmv7s7HiJ8o/tbliGnCztNQtHEwOR"
+        },
+        "filterByFormula": "=",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        -16,
+        176
+      ],
+      "id": "17f607d3-a00a-4a91-a7e9-fc3d4e2b638c",
+      "name": "Search records",
+      "alwaysOutputData": true,
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "bp5JFTVlYzS39VXy",
+          "name": "Airtable Personal Access Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mergeByFields": {
+          "values": [
+            {
+              "field1": "fields.url",
+              "field2": "url"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.compareDatasets",
+      "typeVersion": 2.3,
+      "position": [
+        672,
+        512
+      ],
+      "id": "070e9d10-a1c2-4c2f-a5c8-6d9d557c38d9",
+      "name": "Compare Datasets",
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "content": "## Data Deduplicate\ncompare new data to existing data in case the duplication and save token and cost",
+        "height": 1504,
+        "width": 432
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        400,
+        16
+      ],
+      "typeVersion": 1,
+      "id": "0f455009-9177-4589-bde8-f9fdbe744333",
+      "name": "Sticky Note6"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Indeed",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Stepstone",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Run an Actor and get dataset",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Search records",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "Resume and Position analysis",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Indeed": {
+      "main": [
+        [
+          {
+            "node": "Normalize field names1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Stepstone": {
+      "main": [
+        [
+          {
+            "node": "Normalize field names2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Run an Actor and get dataset": {
+      "main": [
+        [
+          {
+            "node": "Normalize field names",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a text message": {
+      "main": [
+        []
+      ]
+    },
+    "Google Gemini Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Resume and Position analysis",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Structured Output Parser",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Download file": {
+      "main": [
+        [
+          {
+            "node": "Extract from File",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract from File": {
+      "main": [
+        [
+          {
+            "node": "Resume and Position analysis",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Normalize field names": {
+      "main": [
+        [
+          {
+            "node": "Merge data1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Normalize field names1": {
+      "main": [
+        [
+          {
+            "node": "Merge data1",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Normalize field names2": {
+      "main": [
+        [
+          {
+            "node": "Merge data1",
+            "type": "main",
+            "index": 2
+          }
+        ]
+      ]
+    },
+    "Resume and Position analysis": {
+      "main": [
+        [
+          {
+            "node": "save into google sheet",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Create a record",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "save into google sheet": {
+      "main": [
+        []
+      ]
+    },
+    "define notify rules": {
+      "main": [
+        [
+          {
+            "node": "Send a text message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Error Trigger": {
+      "main": [
+        [
+          {
+            "node": "Send a text message1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge data1": {
+      "main": [
+        [
+          {
+            "node": "Compare Datasets",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Create a record": {
+      "main": [
+        [
+          {
+            "node": "define notify rules",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Search records": {
+      "main": [
+        [
+          {
+            "node": "Compare Datasets",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Compare Datasets": {
+      "main": [
+        [],
+        [],
+        [],
+        [
+          {
+            "node": "Resume and Position analysis",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "fd971aaa-b100-4655-8ef3-a9ac022956e2",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "9831deab1537d7453a46815ecb654e33912c0d2e075e1c92456fb0b53242296b"
+  },
+  "id": "try1ELoGOgmhogbk",
+  "tags": []
+}
